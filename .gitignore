@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# Database
+agent_cache.db
+
+# Sensitive Files
+sim-lab-key.pem
+config_private.yaml
+
+# Generated Outputs
+output_v2/
+latency_results.csv
+quarantine_buffer.pcap
+benign_buffer.pcap
+inferred_conditions_v2.json
+
+# Documents (optional - remove these lines if you want to track docs)
+*.docx
+*.pdf
+
+# OS Files
+Thumbs.db
+.DS_Store

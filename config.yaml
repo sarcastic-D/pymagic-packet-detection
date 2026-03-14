@@ -1,0 +1,55 @@
+# --- Paths ---
+INPUT_FILE: "conditions.json" 
+OUTPUT_DIR: "output_v2"
+COMBINED_RULES_FILE: "combined_rules_v2.json"
+
+# Research/Loop Files
+PCAP_MALWARE_FILE: "synthetic_malware_v2.pcap"
+PCAP_CLEAN_FILE: "clean_traffic.pcap"  
+INFERRED_RULES_FILE: "inferred_conditions_v2.json"
+
+# --- Plugin Architecture ---
+FIREWALL_TYPE: "mock"  # Options: "mock", "pfsense", "linux"
+
+# pfSense SSH Driver Configuration
+PFSENSE_HOST: "192.168.1.1"
+PFSENSE_PORT: 22
+PFSENSE_USER: "admin"
+PFSENSE_PASSWORD: "pfsense"
+PFSENSE_WAN_INTERFACE: "wan"
+
+# --- LRU Rate Limiting ---
+LRU_CACHE_TTL: 5            # Seconds before allowing a re-ban for the same IP
+LRU_CACHE_MAX_SIZE: 1024     # Max unique IPs to track
+
+# --- Shannon Entropy ---
+ENTROPY_THRESHOLD: 7.5       # Payload entropy above this triggers a score boost
+ENTROPY_SCORE_BOOST: 35      # Points added to threat score for high entropy
+ENTROPY_MIN_PAYLOAD_SIZE: 32 # Only calculate entropy on payloads >= this many bytes
+
+# --- Quarantine & Benign Buffers ---
+QUARANTINE_BUFFER: "quarantine_buffer.pcap"
+BENIGN_BUFFER: "benign_buffer.pcap"
+
+# --- Live Sniffing (Commented out for now) ---
+# SNIFF_INTERFACE: "eth0"
+# SNIFF_FILTER: "ip"
+
+# --- Risk Scoring Model ---
+# Academic Justification: 'Feature Specificity'
+SCORING_WEIGHTS:
+  payload_magic: 30        # Very Specific (Hex bytes)
+  password: 30             # Very Specific (String)
+  payload_starts_with: 25  # Specific Prefix
+  tcp_option_value: 20     # Protocol Anomaly (Low Level)
+  ip_offset: 20            # Payload Structure
+  seq: 15                  # Header Anomaly
+  ack: 15                  # Header Anomaly
+  window_size: 15          # Header Anomaly
+  sport: 10                # General L4
+  dport: 5                 # Lowest (Common ports reused)
+  entropy: 35              # Shannon Entropy (Encrypted Payload Detection)
+
+# --- Detection Thresholds ---
+MATCH_SCORE_THRESHOLD: 60  # Minimum score (0-100) to alert
+INFERENCE_THRESHOLD: 0.1   # Frequency (10%) in traffic to infer a rule

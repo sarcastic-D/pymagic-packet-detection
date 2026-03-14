@@ -1,0 +1,218 @@
+{
+  "cd00r_variant": {
+    "name": "cd00r-variant",
+    "conditions": [
+      {
+        "id": "c1",
+        "description": "TCP options offset 0x02 = 1366, seq holds attacker IP, dport=443",
+        "protocol": "TCP",
+        "match": {
+          "dport": 443,
+          "tcp_options_min": 4,
+          "tcp_option_offset": 2,
+          "tcp_option_value": "1366",
+          "seq_contains_attacker_ip": true
+        }
+      },
+      {
+        "id": "c2",
+        "description": "TCP sport = 36429, seq has attacker IP, dport=443",
+        "protocol": "TCP",
+        "match": {
+          "sport": 36429,
+          "seq_contains_attacker_ip": true,
+          "dport": 443
+        }
+      },
+      {
+        "id": "c3",
+        "description": "Payload starts with Z4vE, IP @ 0x04, port @ 0x08",
+        "protocol": "TCP",
+        "match": {
+          "payload_starts_with": "Z4vE",
+          "ip_offset": 4,
+          "port_offset": 8
+        }
+      },
+      {
+        "id": "c4",
+        "description": "TCP option offset 0x08=59020, attacker IP @ 0x0A",
+        "protocol": "TCP",
+        "match": {
+          "dport": 443,
+          "tcp_option_offset": 8,
+          "tcp_option_value": "59020",
+          "attacker_ip_offset": 10
+        }
+      },
+      {
+        "id": "c5",
+        "description": "TCP option offset 0x08=59022, attacker IP @ 0x0A, port @ 0x0E",
+        "protocol": "TCP",
+        "match": {
+          "tcp_option_offset": 8,
+          "tcp_option_value": "59022",
+          "attacker_ip_offset": 10,
+          "attacker_port_offset": 14
+        }
+      }
+    ]
+  },
+
+  "linkpro": {
+    "name": "linkpro-ebpf",
+    "conditions": [
+      {
+        "id": "l1",
+        "description": "TCP SYN with window size 54321",
+        "protocol": "TCP",
+        "match": {
+          "flags": "S",
+          "window_size": 54321
+        }
+      }
+    ]
+  },
+
+  "syslogk": {
+    "name": "syslogk",
+    "conditions": [
+      {
+        "id": "s1",
+        "description": "Start Rekoobe: sport=59318, protocol=TCP",
+        "protocol": "TCP",
+        "match": {
+          "sport": 59318
+        }
+      },
+      {
+        "id": "s2",
+        "description": "Stop Rekoobe: reserved=0x08, sport range 63400-63411, hardcoded key",
+        "protocol": "TCP",
+        "match": {
+          "reserved": "0x08",
+          "sport_range": [63400, 63411],
+          "hardcoded_key": "D9sd87JMaij",
+          "key_offset_formula": "((data_offset >> 4) * 4)"
+        }
+      }
+    ]
+  },
+
+  "jynx": {
+    "name": "jynx",
+    "conditions": [
+      {
+        "id": "j1",
+        "description": "MAGIC_ACK=0xdead and MAGIC_SEQ=0xbeef",
+        "protocol": "TCP",
+        "match": {
+          "ack": "0xdead",
+          "seq": "0xbeef"
+        }
+      }
+    ]
+  },
+
+  "jynx2": {
+    "name": "jynx2",
+    "conditions": [
+      {
+        "id": "j2",
+        "description": "sport range 41-43, payload starts with PASSWORD",
+        "protocol": "TCP",
+        "match": {
+          "sport_range": [41, 43],
+          "payload_starts_with_password": true
+        }
+      }
+    ]
+  },
+
+  "bpfdoor": {
+    "name": "bpfdoor",
+    "conditions": [
+      {
+        "id": "b1",
+        "description": "UDP magic 0x7255",
+        "protocol": "UDP",
+        "match": {
+          "payload_magic": "0x7255"
+        }
+      },
+      {
+        "id": "b2",
+        "description": "ICMP ECHO magic 0x7255",
+        "protocol": "ICMP",
+        "match": {
+          "payload_magic": "0x7255"
+        }
+      },
+      {
+        "id": "b3",
+        "description": "TCP magic 0x5293 + password",
+        "protocol": "TCP",
+        "match": {
+          "payload_magic": "0x5293",
+          "password": "justrobot"
+        }
+      }
+    ]
+  },
+
+  "reptile": {
+    "name": "reptile",
+    "conditions": [
+      {
+        "id": "r1",
+        "description": "Reptile magic packet (multiple samples expanded)",
+        "protocol": ["TCP", "UDP", "ICMP"],
+        "match": {
+          "src_port_dynamic": true,
+          "payload_magic_dynamic": true,
+          "password_dynamic": true,
+          "c2_ip_offset_dynamic": true,
+          "c2_port_offset_dynamic": true
+        },
+        "samples": [
+          {
+            "date": "2020.05.22",
+            "name": "rxp.ko",
+            "port": 666,
+            "magic": "smoke",
+            "password": "smoker666",
+            "location": "/rxp/",
+            "vermagic": "2.6.32-696.18.7.el6.x86_64"
+          },
+          {
+            "date": "2021.06.05",
+            "name": "falc0n.ko",
+            "port": 41302,
+            "magic": "7313F4lc0n4710n",
+            "password": "F4lc0nFly1n9d00r",
+            "location": "/usr/falc0n/",
+            "vermagic": "3.10.0-1127.10.1.el7.x86_64"
+          },
+          {
+            "date": "2022.04.27",
+            "name": "N/A",
+            "port": 2307,
+            "magic": "hA30r",
+            "password": "x5s3rt",
+            "location": "/opttest/",
+            "vermagic": "3.10.0-1160.59.1.el7.x86_64"
+          },
+          {
+            "date": "2022.11.21",
+            "name": "myshell.ko",
+            "port": 666,
+            "magic": "xiaofangzi",
+            "password": "xiaofangzi",
+            "location": "/myshell/",
+            "vermagic": "2.6.32-431.el6.x86_64"
+          }
+        ]
+      }
+    ]
+  }
+}
