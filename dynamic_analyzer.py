@@ -121,7 +121,11 @@ def analyze_live_packet(raw_pkt, config):
         if not os.path.exists(rules_path): return
         with open(rules_path, 'r') as f:
             rules_data = json.load(f)
-            rules = rules_data.get("rules", [])
+            # Handle both formats: plain list or {"rules": [...]}
+            if isinstance(rules_data, list):
+                rules = rules_data
+            else:
+                rules = rules_data.get("rules", [])
             
         logger = AlertLogger()
         quarantine_path = config.get("QUARANTINE_BUFFER", "quarantine_buffer.pcap")
