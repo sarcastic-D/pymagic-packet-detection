@@ -289,9 +289,9 @@ def main():
 
     # --- [FUTURE] Live Sniffing Mode ---
     # Uncomment the following to enable live network sniffing:
-    print(f"[*] Sniffing on interface: {config.get('SNIFF_INTERFACE', 'eth0')}...")
+    print(f"[*] Sniffing on interface: {config.get('SNIFF_INTERFACE', 'enp0s3')}...")
     sniff(
-        iface=config.get("SNIFF_INTERFACE", "eth0"),
+        iface=config.get("SNIFF_INTERFACE", "enp0s3"),
         prn=lambda pkt: analyze_live_packet(pkt, config),
         filter=config.get("SNIFF_FILTER", "ip"),
         store=0
