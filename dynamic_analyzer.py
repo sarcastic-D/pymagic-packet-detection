@@ -28,14 +28,6 @@ from common_utilities import load_config
 from defragmenter import FragmentReassembler
 from webhook_sender import send_block_request
 
-# --- [NEW] Live Sniffing (Commented out for now) ---
-# from scapy.all import sniff
-# To enable live sniffing, uncomment the above import and use:
-#   sniff(iface=CONFIG.get("SNIFF_INTERFACE", "eth0"), 
-#         prn=analyze_live_packet, 
-#         filter=CONFIG.get("SNIFF_FILTER", "ip"),
-#         store=0)
-
 
 # ============================================================
 # LRU RATE-LIMITING CACHE
@@ -117,6 +109,54 @@ def save_to_benign(pkt, benign_path: str):
     except Exception as e:
         print(f"[!] Error writing to benign buffer: {e}")
 
+
+# Initialize global objects for Live Sniffing
+live_rate_limiter = LRURateLimiter(ttl_seconds=5)
+# Note: we'll load the rules dynamically in the live sniffer for simplicity
+
+def analyze_live_packet(raw_pkt, config):
+    try:
+        rules_path = f"{config['OUTPUT_DIR']}/{config['COMBINED_RULES_FILE']}"
+        import os, json
+        if not os.path.exists(rules_path): return
+        with open(rules_path, 'r') as f:
+            rules_data = json.load(f)
+            rules = rules_data.get("rules", [])
+            
+        logger = AlertLogger()
+        quarantine_path = config.get("QUARANTINE_BUFFER", "quarantine_buffer.pcap")
+        benign_path = config.get("BENIGN_BUFFER", "benign_buffer.pcap")
+        
+        pkt = raw_pkt
+        if IP in pkt and not (TCP in pkt or UDP in pkt or ICMP in pkt):
+            try:
+                rebuilt_pkt = IP(bytes(pkt[IP]))
+                if TCP in rebuilt_pkt or UDP in rebuilt_pkt or ICMP in rebuilt_pkt:
+                    pkt = rebuilt_pkt
+            except: pass
+
+        norm = normalize_packet(pkt)
+        if not norm: return
+        
+        packet_matched = False
+        for rule in rules:
+            matched, score, reasons = match_rule(norm, rule)
+            if matched:
+                packet_matched = True
+                logger.log(norm, rule.get("rule_id"), rule.get("meta"), score, reasons)
+                save_to_quarantine(raw_pkt, quarantine_path)
+                
+                malicious_ip = norm.get("ip_src")
+                if malicious_ip and live_rate_limiter.should_send(malicious_ip):
+                    send_block_request(malicious_ip) # Synchronous call to ensure it sends during live sniff
+                elif malicious_ip:
+                    print(f"[LRU Cache] Skipping duplicate webhook for {malicious_ip}")
+
+        if not packet_matched:
+            save_to_benign(raw_pkt, benign_path)
+
+    except Exception as e:
+        print(f"[!] Live Analysis Error: {e}")
 
 # ============================================================
 # CORE ANALYSIS ENGINE
@@ -206,8 +246,6 @@ def run_analysis(pcap_path, mode='live'):
                         async_send_block_request(malicious_ip)
                     elif malicious_ip:
                         print(f"[LRU Cache] Skipping duplicate webhook for {malicious_ip}")
-                
-                break  # One rule match per packet is sufficient
         
         # 4. Save benign traffic for baseline updating (live mode only)
         if not packet_matched and mode == 'live':
@@ -239,6 +277,10 @@ def main():
 
     # --- [CURRENT] Static PCAP Analysis Mode ---
     run_analysis(pcap_path, mode='live')
+    
+    # Wait a moment for the asynchronous webhooks to finish sending before the script exits
+    import time
+    time.sleep(2)
 
     # --- [FUTURE] Live Sniffing Mode ---
     # Uncomment the following to enable live network sniffing:
