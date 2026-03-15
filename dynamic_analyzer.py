@@ -276,21 +276,22 @@ def main():
     print()
 
     # --- [CURRENT] Static PCAP Analysis Mode ---
-    run_analysis(pcap_path, mode='live')
+    # To run offline analysis, uncomment this line:
+    # run_analysis(pcap_path, mode='live')
     
     # Wait a moment for the asynchronous webhooks to finish sending before the script exits
-    import time
-    time.sleep(2)
+    # import time
+    # time.sleep(2)
 
     # --- [FUTURE] Live Sniffing Mode ---
     # Uncomment the following to enable live network sniffing:
-    # print(f"[*] Sniffing on interface: {config.get('SNIFF_INTERFACE', 'eth0')}...")
-    # sniff(
-    #     iface=config.get("SNIFF_INTERFACE", "eth0"),
-    #     prn=lambda pkt: analyze_live_packet(pkt, config),
-    #     filter=config.get("SNIFF_FILTER", "ip"),
-    #     store=0
-    # )
+    print(f"[*] Sniffing on interface: {config.get('SNIFF_INTERFACE', 'eth0')}...")
+    sniff(
+        iface=config.get("SNIFF_INTERFACE", "eth0"),
+        prn=lambda pkt: analyze_live_packet(pkt, config),
+        filter=config.get("SNIFF_FILTER", "ip"),
+        store=0
+    )
 
 
 if __name__ == "__main__":
