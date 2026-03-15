@@ -19,7 +19,7 @@ import os
 import time
 import threading
 from collections import OrderedDict
-from scapy.all import rdpcap, wrpcap
+from scapy.all import rdpcap, wrpcap, sniff
 from scapy.layers.inet import IP, TCP, UDP, ICMP
 from packet_normalizer import normalize_packet
 from rule_matcher import match_rule
