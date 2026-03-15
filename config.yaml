@@ -9,14 +9,14 @@ PCAP_CLEAN_FILE: "clean_traffic.pcap"
 INFERRED_RULES_FILE: "inferred_conditions_v2.json"
 
 # --- Plugin Architecture ---
-FIREWALL_TYPE: "mock"  # Options: "mock", "pfsense", "linux"
+FIREWALL_TYPE: "pfsense"  # Options: "mock", "pfsense", "linux"
 
 # pfSense SSH Driver Configuration
 PFSENSE_HOST: "192.168.1.1"
 PFSENSE_PORT: 22
 PFSENSE_USER: "admin"
 PFSENSE_PASSWORD: "pfsense"
-PFSENSE_WAN_INTERFACE: "wan"
+PFSENSE_WAN_INTERFACE: "lan"
 
 # --- LRU Rate Limiting ---
 LRU_CACHE_TTL: 5            # Seconds before allowing a re-ban for the same IP
