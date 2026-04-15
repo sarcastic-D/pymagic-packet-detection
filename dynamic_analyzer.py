@@ -176,6 +176,11 @@ def analyze_live_packet(raw_pkt, config):
         norm = normalize_packet(pkt)
         if not norm: return
         
+        # --- [NEW] IGNORE WHITELISTED IPS ---
+        if norm.get("ip_src") in config.get("WHITELIST_IPS", []):
+            return
+        # ------------------------------------
+ 
         # --- [NEW] ML PRE-FILTER TRIAGE ---
         is_suspicious = ml_predict(norm)
         if not is_suspicious:
