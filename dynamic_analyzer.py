@@ -176,10 +176,11 @@ def analyze_live_packet(raw_pkt, config):
         norm = normalize_packet(pkt)
         if not norm: return
         
-        # --- [NEW] IGNORE WHITELISTED IPS ---
-        if norm.get("ip_src") in config.get("WHITELIST_IPS", []):
+        # --- [NEW] HARDCODED VM WHITELIST TO STOP LOOPS ---
+        ignore_ips = ["127.0.0.1", "192.168.1.1", "192.168.1.100", "10.0.2.100"]
+        if norm.get("ip_src") in ignore_ips or norm.get("ip_src") in config.get("WHITELIST_IPS", []):
             return
-        # ------------------------------------
+        # --------------------------------------------------
  
         # --- [NEW] ML PRE-FILTER TRIAGE ---
         is_suspicious = ml_predict(norm)
