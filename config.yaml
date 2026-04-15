@@ -7,6 +7,12 @@ COMBINED_RULES_FILE: "combined_rules_v2.json"
 PCAP_MALWARE_FILE: "synthetic_malware_v2.pcap"
 PCAP_CLEAN_FILE: "clean_traffic.pcap"  
 INFERRED_RULES_FILE: "inferred_conditions_v2.json"
+# --- Whitelist ---
+WHITELIST_IPS: 
+  - "127.0.0.1"
+  - "192.168.1.1"
+  - "192.168.1.100"
+  - "10.0.2.100" # fallback if network changed
 
 # --- Plugin Architecture ---
 FIREWALL_TYPE: "pfsense"  # Options: "mock", "pfsense", "linux"
