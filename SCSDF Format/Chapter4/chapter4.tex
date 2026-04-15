@@ -1,0 +1,248 @@
+\chapter{Implementation and Prototyping}
+
+\section{Development Environment and Toolstack}
+
+\begin{table}[h]
+\centering
+\caption{Development Toolstack}
+\label{tab:toolstack}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Component} & \textbf{Technology} \\
+\hline
+Language & Python 3.10+ \\
+\hline
+Packet Processing & Scapy 2.5+ \\
+\hline
+Web Framework & Flask 3.0+ (Agent Core API) \\
+\hline
+Machine Learning & scikit-learn 1.4+, joblib \\
+\hline
+SSH Integration & Paramiko (pfSense driver) \\
+\hline
+Threat Intelligence & Requests (AlienVault OTX API) \\
+\hline
+Visualization & Matplotlib, NumPy \\
+\hline
+Configuration & PyYAML \\
+\hline
+Database & SQLite3 (Idempotency cache) \\
+\hline
+Virtualization & Oracle VirtualBox 7.0 \\
+\hline
+Firewall & pfSense CE \\
+\hline
+\end{tabular}
+\end{table}
+
+% ---- FIGURE: Project Structure ----
+\begin{figure}[h]
+\centering
+\fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}\textit{Insert Screenshot: Project directory structure showing all Python modules in the file explorer / terminal}\vspace{3cm}}}
+\caption{Sentinel Forge Project File Structure}
+\label{fig:project_structure}
+\end{figure}
+
+% ---- FIGURE: config.yaml ----
+\begin{figure}[h]
+\centering
+\fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}\textit{Insert Screenshot: config.yaml file open in editor showing FIREWALL\_TYPE, RISK\_SCORING\_WEIGHTS, ENTROPY\_THRESHOLD, HMAC\_SECRET, and other settings}\vspace{3cm}}}
+\caption{System Configuration File (config.yaml)}
+\label{fig:config_yaml}
+\end{figure}
+
+\section{Constructing the Static Threat Knowledge Base}
+
+The threat intelligence is codified in \texttt{conditions.json}, a structured database encoding activation signatures for seven rootkit families across 17 detection conditions.
+
+\begin{table}[h]
+\centering
+\caption{Rootkit Families in the Knowledge Base}
+\label{tab:rootkit_families}
+\begin{tabular}{|l|c|l|}
+\hline
+\textbf{Rootkit} & \textbf{Variants} & \textbf{Key Triggers} \\
+\hline
+cd00r & 5 & TCP Options, Payload Prefix, Port \\
+\hline
+BPFDoor & 3 & Magic Bytes (0x7255, 0x5293), Password \\
+\hline
+Syslogk & 2 & Source Port 59318, Hardcoded Key \\
+\hline
+Jynx & 1 & ACK=0xDEAD, SEQ=0xBEEF \\
+\hline
+Jynx2 & 1 & Sport Range 41--43, Password \\
+\hline
+Reptile & 4 & Dynamic Magic/Password per sample \\
+\hline
+Linkpro & 1 & Window Size 54321 \\
+\hline
+\end{tabular}
+\end{table}
+
+The Static Analyzer (\texttt{static\_analyzer.py}) processes this database through structure validation, semantic checking, metadata expansion (for multi-sample rootkits like Reptile), and rule normalization.
+
+% ---- FIGURE: conditions.json Code Snippet ----
+\begin{figure}[h]
+\centering
+\fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}\textit{Insert Screenshot: conditions.json file open in editor showing the structure of a rootkit entry --- e.g., BPFDoor with its conditions array containing id, description, protocol, and match fields}\vspace{3cm}}}
+\caption{Threat Knowledge Base Structure (conditions.json)}
+\label{fig:conditions_json}
+\end{figure}
+
+% ---- FIGURE: Static Analyzer Output ----
+\begin{figure}[h]
+\centering
+\fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}\textit{Insert Screenshot: Terminal output of static\_analyzer.py showing validation, expansion, and ``Compiled X rules into combined\_rules\_v2.json''}\vspace{3cm}}}
+\caption{Static Analyzer: Rule Compilation Output}
+\label{fig:static_analyzer_output}
+\end{figure}
+
+\section{Rule Compilation and Deterministic ID Generation}
+
+Each validated condition is normalized into a canonical rule structure with a deterministic \texttt{rule\_id} generated via SHA-256 hashing of the match criteria. This ensures identical rules always produce identical IDs for deduplication.
+
+The risk scoring engine assigns configurable weights based on feature specificity:
+
+\begin{table}[h]
+\centering
+\caption{Risk Scoring Weights}
+\label{tab:weights}
+\begin{tabular}{|l|c|}
+\hline
+\textbf{Feature} & \textbf{Weight} \\
+\hline
+Payload Magic Bytes & 30 \\
+\hline
+Password String & 30 \\
+\hline
+Shannon Entropy ($>$7.5) & 35 \\
+\hline
+Payload Prefix & 25 \\
+\hline
+TCP Option Value & 20 \\
+\hline
+Sequence / ACK Number & 15 \\
+\hline
+Window Size & 15 \\
+\hline
+Source Port & 10 \\
+\hline
+Destination Port & 5 \\
+\hline
+\end{tabular}
+\end{table}
+
+A 50-point critical boost is applied when high-specificity fields match. The detection threshold defaults to 60 points. Rules can optionally be exported to Suricata-compatible syntax for interoperability.
+
+% ---- FIGURE: Shannon Entropy Code Snippet ----
+\begin{figure}[h]
+\centering
+\fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}\textit{Insert Screenshot: Code snippet from packet\_normalizer.py showing the calculate\_shannon\_entropy() function --- the byte frequency counting, probability calculation, and entropy formula implementation}\vspace{3cm}}}
+\caption{Code Snippet: Shannon Entropy Calculation (packet\_normalizer.py)}
+\label{fig:code_entropy}
+\end{figure}
+
+\section{Firewall Driver Integration}
+
+The Agent Core uses a plugin architecture to support multiple enforcement backends:
+
+\begin{itemize}
+    \item \textbf{pfSense Driver:} Uses Paramiko to SSH into pfSense and execute \texttt{easyrule block <interface> <IP>}.
+    \item \textbf{Linux iptables Driver:} Executes \texttt{iptables -A INPUT -s <IP> -j DROP} via subprocess.
+    \item \textbf{Mock Driver:} Prints simulated firewall commands for testing without infrastructure.
+\end{itemize}
+
+% ---- SCREENSHOT PLACEHOLDER ----
+\begin{figure}[h]
+\centering
+\fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}\textit{Insert Screenshot: Agent Core terminal showing ``UNIVERSAL AGENT CORE v2.0 STARTING'', plugin loaded, and listening on port 5000}\vspace{3cm}}}
+\caption{Universal Agent Core: Startup with Plugin Driver}
+\label{fig:agent_core_startup}
+\end{figure}
+
+% ---- SCREENSHOT PLACEHOLDER ----
+\begin{figure}[h]
+\centering
+\fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}\textit{Insert Screenshot: Agent Core receiving a webhook --- showing HMAC verification, whitelist check, and ``IP actively blocked'' response}\vspace{3cm}}}
+\caption{Agent Core: Authenticated Webhook Reception and IP Blocking}
+\label{fig:agent_webhook}
+\end{figure}
+
+% ---- SCREENSHOT PLACEHOLDER ----
+\begin{figure}[h]
+\centering
+\fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}\textit{Insert Screenshot: pfSense web UI showing the dynamically added firewall block rule for the attacker IP}\vspace{3cm}}}
+\caption{pfSense Firewall: Dynamically Added Block Rule}
+\label{fig:pfsense_rule}
+\end{figure}
+
+% ---- FIGURE: HMAC Code Snippet ----
+\begin{figure}[h]
+\centering
+\fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}\textit{Insert Screenshot: Code snippet from agent\_core.py showing the HMAC-SHA256 verification logic --- hmac.new(), compare\_digest(), and the enforce\_block() function with whitelist and idempotency checks}\vspace{3cm}}}
+\caption{Code Snippet: HMAC-SHA256 Webhook Verification (agent\_core.py)}
+\label{fig:code_hmac}
+\end{figure}
+
+\section{The Autonomous IOC Fetcher and Intelligence Feedback Loop}
+
+The IOC Fetcher (\texttt{ioc\_fetcher.py}) connects to AlienVault OTX to pull threat intelligence pulses matching rootkit and backdoor tags. Downloaded indicators (IPv4 addresses, file hashes) are dynamically merged into \texttt{conditions.json}.
+
+After blocking an IP, the Threat Intel module (\texttt{threat\_intel.py}) autonomously queries OTX for the IP's global reputation in a background thread. If the IP has zero global threat reports, it is flagged as a potential false positive for SOC analyst review.
+
+% ---- SCREENSHOT PLACEHOLDER ----
+\begin{figure}[h]
+\centering
+\fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}\textit{Insert Screenshot: Dynamic Analyzer terminal output showing detection alerts --- rule ID, score, and matched reasons for each detected rootkit packet}\vspace{3cm}}}
+\caption{Dynamic Analyzer: Real-Time Detection Output}
+\label{fig:dynamic_analyzer_output}
+\end{figure}
+
+% ---- SCREENSHOT PLACEHOLDER ----
+\begin{figure}[h]
+\centering
+\fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}\textit{Insert Screenshot: Malware Simulator output showing ``AUTOMATED RED TEAM SIMULATOR'' with packet generation for each rule variant}\vspace{3cm}}}
+\caption{Malware Simulator: Synthetic Attack Traffic Generation}
+\label{fig:malware_simulator}
+\end{figure}
+
+% ---- SCREENSHOT PLACEHOLDER ----
+\begin{figure}[h]
+\centering
+\fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}\textit{Insert Screenshot: run.py full pipeline output showing all 4 steps completing --- Compiling, Simulating, Analyzing, Visualizing}\vspace{3cm}}}
+\caption{Sentinel Forge: Complete Pipeline Execution (run.py)}
+\label{fig:full_pipeline}
+\end{figure}
+
+% ---- SCREENSHOT PLACEHOLDER ----
+\begin{figure}[h]
+\centering
+\fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}\textit{Insert Screenshot: alerts\_v2.json file content showing JSON alert entries with timestamp, rule\_id, risk\_score, and packet metadata}\vspace{3cm}}}
+\caption{Alert Logging: JSON Alert Output}
+\label{fig:alert_json}
+\end{figure}
+
+% ---- SCREENSHOT PLACEHOLDER ----
+\begin{figure}[h]
+\centering
+\fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}\textit{Insert Screenshot: ML Pre-Filter training output --- ``Training Explainable Decision Tree on X samples... Model saved to ml\_prefilter.joblib''}\vspace{3cm}}}
+\caption{ML Pre-Filter: Decision Tree Training Output}
+\label{fig:ml_training}
+\end{figure}
+
+% ---- FIGURE: Syslog Output ----
+\begin{figure}[h]
+\centering
+\fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}\textit{Insert Screenshot: sentinel\_forge\_syslog.log file showing RFC-formatted log entries --- timestamp, SENTINEL\_FORGE, WARNING, rule ID, score, src\_ip, dst\_ip, reason fields}\vspace{3cm}}}
+\caption{SIEM-Compatible Syslog Output (sentinel\_forge\_syslog.log)}
+\label{fig:syslog_output}
+\end{figure}
+
+% ---- FIGURE: IOC Fetcher Output ----
+\begin{figure}[h]
+\centering
+\fbox{\parbox{0.85\textwidth}{\centering\vspace{3cm}\textit{Insert Screenshot: ioc\_fetcher.py terminal output showing ``Connecting to AlienVault OTX'', downloaded pulses count, and ``Successfully integrated X new IOCs''}\vspace{3cm}}}
+\caption{Autonomous IOC Fetcher: AlienVault OTX Integration Output}
+\label{fig:ioc_fetcher}
+\end{figure}

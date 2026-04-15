@@ -85,6 +85,18 @@ def normalize_packet(pkt):
         except Exception:
             pass 
         
+        # 4. [NEW] XOR Brute-Force Decode (Single-byte key: 0x00 - 0xFF)
+        # Real-world rootkits (like BPFDoor, Syslogk) use single-byte XOR
+        # to hide magic bytes from signature scanners. We try all 256 keys.
+        for key in range(1, 256):  # Skip 0x00 (XOR with 0 = no change)
+            xor_decoded = bytes([b ^ key for b in raw_load])
+            # Only add if it looks meaningfully different AND contains printable chars
+            # This prevents 255 garbage entries
+            printable_ratio = sum(1 for b in xor_decoded if 32 <= b <= 126) / max(len(xor_decoded), 1)
+            if printable_ratio > 0.3:  # At least 30% printable = likely decoded
+                norm["payload_variants"].append(xor_decoded)
+                break  # One good XOR key is enough for matching
+        
         # --- [NEW] Shannon Entropy Calculation ---
         # Calculate entropy on the raw payload bytes
         # Only calculate on payloads large enough to be statistically meaningful

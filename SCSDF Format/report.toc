@@ -1,0 +1,24 @@
+\contentsline {chapter}{Declaration By Student}{II}{}%
+\contentsline {chapter}{Certificate From Guide}{III}{}%
+\contentsline {chapter}{Certificate}{IV}{}%
+\contentsline {chapter}{List of Abbreviations}{VII}{}%
+\contentsline {chapter}{List of Tables}{VIII}{}%
+\contentsline {chapter}{List of Figures}{IX}{}%
+\contentsline {chapter}{Table of Contents}{X}{}%
+\contentsline {chapter}{\numberline {1}Introduction}{1}{}%
+\contentsline {section}{\numberline {1.1}Purpose}{1}{}%
+\contentsline {section}{\numberline {1.2}Dissertation Submission }{1}{}%
+\contentsline {chapter}{\numberline {2}Specifications For Dissertation Format}{2}{}%
+\contentsline {section}{\numberline {2.1}Preparation of Manuscript and Copies }{2}{}%
+\contentsline {section}{\numberline {2.2}Size and Margins}{2}{}%
+\contentsline {subsection}{\numberline {2.2.1}Printing of Dissertation}{2}{}%
+\contentsline {subsection}{\numberline {2.2.2}}{2}{}%
+\contentsline {subsection}{\numberline {2.2.3}}{2}{}%
+\contentsline {subsection}{\numberline {2.2.4}}{2}{}%
+\contentsline {subsection}{\numberline {2.2.5}}{2}{}%
+\contentsline {subsection}{\numberline {2.2.6}}{3}{}%
+\contentsline {section}{\numberline {2.3}Page Numbering}{3}{}%
+\contentsline {subsection}{\numberline {2.3.1}}{3}{}%
+\contentsline {subsection}{\numberline {2.3.2}}{3}{}%
+\contentsline {subsection}{\numberline {2.3.3}}{3}{}%
+\contentsline {section}{\numberline {2.4}Line Spacing}{3}{}%

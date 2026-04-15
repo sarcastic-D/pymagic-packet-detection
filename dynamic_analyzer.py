@@ -27,6 +27,40 @@ from alert_logger import AlertLogger
 from common_utilities import load_config
 from defragmenter import FragmentReassembler
 from webhook_sender import send_block_request
+from threat_intel import revalidate_blocked_ip
+
+try:
+    import joblib
+    HAS_JOBLIB = True
+except ImportError:
+    HAS_JOBLIB = False
+
+# --- LOAD ML PRE-FILTER ---
+ML_MODEL = None
+if HAS_JOBLIB and os.path.exists("ml_prefilter.joblib"):
+    try:
+        ML_MODEL = joblib.load("ml_prefilter.joblib")
+        print("[+] ML Pre-Filter (Decision Tree) loaded successfully.")
+    except Exception as e:
+        print(f"[-] Could not load ML model: {e}")
+
+def ml_predict(norm_pkt):
+    """
+    Evaluates basic headers against the trained Decision Tree.
+    Returns True if suspicious, False if safe.
+    """
+    if ML_MODEL is None:
+        return True # Fallback: analyze everything
+        
+    features = [[
+        norm_pkt.get("entropy", 0.0),
+        norm_pkt.get("dport", 0),
+        norm_pkt.get("sport", 0),
+        norm_pkt.get("window_size", 0),
+        1 if norm_pkt.get("protocol") == "TCP" else 0
+    ]]
+    prediction = ML_MODEL.predict(features)[0]
+    return prediction == 1
 
 
 # ============================================================
@@ -142,6 +176,13 @@ def analyze_live_packet(raw_pkt, config):
         norm = normalize_packet(pkt)
         if not norm: return
         
+        # --- [NEW] ML PRE-FILTER TRIAGE ---
+        is_suspicious = ml_predict(norm)
+        if not is_suspicious:
+            save_to_benign(raw_pkt, benign_path)
+            return  # 90% of traffic is discarded right here in 0.1ms
+        # ----------------------------------
+        
         packet_matched = False
         for rule in rules:
             matched, score, reasons = match_rule(norm, rule)
@@ -153,6 +194,15 @@ def analyze_live_packet(raw_pkt, config):
                 malicious_ip = norm.get("ip_src")
                 if malicious_ip and live_rate_limiter.should_send(malicious_ip):
                     send_block_request(malicious_ip) # Synchronous call to ensure it sends during live sniff
+                    
+                    # --- [NEW] AUTONOMOUS THREAT INTEL REVALIDATION ---
+                    threading.Thread(
+                        target=revalidate_blocked_ip, 
+                        args=(malicious_ip,), 
+                        daemon=True
+                    ).start()
+                    # --------------------------------------------------
+                    
                 elif malicious_ip:
                     print(f"[LRU Cache] Skipping duplicate webhook for {malicious_ip}")
 

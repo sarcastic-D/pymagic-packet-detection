@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sentinel Forge — Packet Journey Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --card: #111827;
+    --border: #1e293b;
+    --accent: #38bdf8;
+    --green: #22c55e;
+    --red: #ef4444;
+    --orange: #f59e0b;
+    --purple: #a78bfa;
+    --text: #e2e8f0;
+    --dim: #64748b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .header {
+    text-align: center;
+    padding: 30px 20px 10px;
+  }
+  .header h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .header p {
+    color: var(--dim);
+    font-size: 0.95rem;
+    margin-top: 6px;
+  }
+
+  /* ---- Pipeline Container ---- */
+  .pipeline {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 8px;
+    padding: 30px 20px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+
+  /* ---- Stage Card ---- */
+  .stage {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    width: 155px;
+    min-height: 200px;
+    padding: 16px 12px;
+    text-align: center;
+    position: relative;
+    opacity: 0.25;
+    transform: scale(0.92);
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    flex-shrink: 0;
+  }
+  .stage.active {
+    opacity: 1;
+    transform: scale(1);
+    border-color: var(--accent);
+    box-shadow: 0 0 25px rgba(56, 189, 248, 0.15);
+  }
+  .stage.done {
+    opacity: 0.7;
+    transform: scale(0.95);
+    border-color: var(--green);
+  }
+  .stage.blocked {
+    border-color: var(--red);
+    box-shadow: 0 0 30px rgba(239, 68, 68, 0.2);
+  }
+
+  .stage-icon {
+    font-size: 2rem;
+    margin-bottom: 8px;
+    display: block;
+  }
+  .stage-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .stage-desc {
+    font-size: 0.7rem;
+    color: var(--dim);
+    line-height: 1.4;
+  }
+  .stage-status {
+    margin-top: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    padding: 4px 8px;
+    border-radius: 6px;
+    display: inline-block;
+  }
+  .status-pass { background: rgba(34,197,94,0.15); color: var(--green); }
+  .status-fail { background: rgba(239,68,68,0.15); color: var(--red); }
+  .status-warn { background: rgba(245,158,11,0.15); color: var(--orange); }
+  .status-info { background: rgba(56,189,248,0.15); color: var(--accent); }
+
+  /* Arrow between stages */
+  .arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: var(--dim);
+    opacity: 0.3;
+    transition: all 0.5s ease;
+    flex-shrink: 0;
+    padding-top: 80px;
+  }
+  .arrow.active {
+    opacity: 1;
+    color: var(--accent);
+    animation: pulseArrow 1s ease infinite;
+  }
+
+  @keyframes pulseArrow {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(4px); }
+  }
+
+  /* ---- Packet Visualization ---- */
+  .packet-display {
+    max-width: 800px;
+    margin: 10px auto 20px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+  }
+  .packet-display h3 {
+    font-size: 0.85rem;
+    color: var(--accent);
+    margin-bottom: 12px;
+    font-weight: 700;
+  }
+  .packet-fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 8px;
+  }
+  .pf {
+    background: rgba(30, 41, 59, 0.6);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+  }
+  .pf-label { color: var(--dim); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.5px; }
+  .pf-value { color: var(--text); margin-top: 2px; font-weight: 700; }
+  .pf-value.danger { color: var(--red); }
+  .pf-value.safe { color: var(--green); }
+  .pf-value.warn { color: var(--orange); }
+
+  /* ---- Terminal Log ---- */
+  .terminal {
+    max-width: 800px;
+    margin: 0 auto 20px;
+    background: #000;
+    border: 1px solid #333;
+    border-radius: 10px;
+    padding: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--green);
+    max-height: 200px;
+    overflow-y: auto;
+    line-height: 1.6;
+  }
+  .terminal .log-line { opacity: 0; animation: fadeInLog 0.3s forwards; }
+  .log-alert { color: var(--red); }
+  .log-info { color: var(--accent); }
+  .log-warn { color: var(--orange); }
+  .log-success { color: var(--green); }
+
+  @keyframes fadeInLog {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ---- Controls ---- */
+  .controls {
+    text-align: center;
+    padding: 10px 20px 30px;
+  }
+  .btn {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 12px 32px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 0 6px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--purple));
+    color: #000;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(56, 189, 248, 0.3); }
+  .btn-reset {
+    background: var(--card);
+    color: var(--dim);
+    border: 1px solid var(--border);
+  }
+  .btn-reset:hover { border-color: var(--accent); color: var(--text); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  .step-counter {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--dim);
+    margin-top: 10px;
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 1100px) {
+    .pipeline { flex-wrap: wrap; gap: 12px; }
+    .arrow { padding-top: 0; transform: rotate(90deg); }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>⚡ Sentinel Forge — Packet Journey</h1>
+  <p>Watch a malicious Magic Packet travel through the 6-Stage Autonomous Defense Pipeline</p>
+</div>
+
+<!-- Pipeline Stages -->
+<div class="pipeline" id="pipeline">
+  <div class="stage" id="s0">
+    <span class="stage-icon">💀</span>
+    <div class="stage-title">Attacker</div>
+    <div class="stage-desc">Kali Linux sends an encrypted Magic Packet with Base64 obfuscation</div>
+  </div>
+  <div class="arrow" id="a0">→</div>
+
+  <div class="stage" id="s1">
+    <span class="stage-icon">📡</span>
+    <div class="stage-title">SPAN Port</div>
+    <div class="stage-desc">Traffic copy captured via Promiscuous Mode (Zero Latency)</div>
+  </div>
+  <div class="arrow" id="a1">→</div>
+
+  <div class="stage" id="s2">
+    <span class="stage-icon">🤖</span>
+    <div class="stage-title">ML Pre-Filter</div>
+    <div class="stage-desc">Decision Tree evaluates headers in 0.1ms</div>
+  </div>
+  <div class="arrow" id="a2">→</div>
+
+  <div class="stage" id="s3">
+    <span class="stage-icon">🔬</span>
+    <div class="stage-title">Deep Inspection</div>
+    <div class="stage-desc">Shannon Entropy + Signature Matching + Defragmentation</div>
+  </div>
+  <div class="arrow" id="a3">→</div>
+
+  <div class="stage" id="s4">
+    <span class="stage-icon">🔐</span>
+    <div class="stage-title">HMAC Webhook</div>
+    <div class="stage-desc">Zero-Trust SHA256 signed command → Agent Core</div>
+  </div>
+  <div class="arrow" id="a4">→</div>
+
+  <div class="stage" id="s5">
+    <span class="stage-icon">🧱</span>
+    <div class="stage-title">Firewall Block</div>
+    <div class="stage-desc">Plugin Architecture injects a DROP rule into pfSense</div>
+  </div>
+  <div class="arrow" id="a5">→</div>
+
+  <div class="stage" id="s6">
+    <span class="stage-icon">🌐</span>
+    <div class="stage-title">Threat Intel</div>
+    <div class="stage-desc">AlienVault OTX confirms the IP is globally malicious</div>
+  </div>
+</div>
+
+<!-- Packet Details -->
+<div class="packet-display" id="packetDisplay" style="display:none;">
+  <h3>📦 Live Packet Metadata</h3>
+  <div class="packet-fields" id="packetFields"></div>
+</div>
+
+<!-- Terminal -->
+<div class="terminal" id="terminal"></div>
+
+<!-- Controls -->
+<div class="controls">
+  <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">▶ Start Attack</button>
+  <button class="btn btn-reset" onclick="resetDemo()">↺ Reset</button>
+  <div class="step-counter" id="stepCounter">Ready to launch attack simulation</div>
+</div>
+
+<script>
+const stages = [
+  {
+    log: [
+      { text: '[KALI] python malware_simulator.py --target 10.0.2.9 --source 10.0.2.15 --live', cls: 'log-info' },
+      { text: '[KALI] Crafting BPFDoor Magic Packet...', cls: 'log-info' },
+      { text: '[KALI] Payload: Base64( 0x4242 ) | Port: 8443 | Window: 514', cls: 'log-alert' },
+      { text: '[KALI] send(pkt, verbose=False) → transmitted on wire', cls: 'log-alert' }
+    ],
+    packet: [
+      { label: 'Source IP', value: '10.0.2.15 (Attacker)', cls: 'danger' },
+      { label: 'Dest IP', value: '10.0.2.9 → NAT → 192.168.1.15', cls: '' },
+      { label: 'Protocol', value: 'TCP', cls: '' },
+      { label: 'Dest Port', value: '8443', cls: 'warn' },
+      { label: 'Window Size', value: '514', cls: 'warn' },
+      { label: 'Payload', value: 'QkI= (Base64 Obfuscated)', cls: 'danger' }
+    ]
+  },
+  {
+    log: [
+      { text: '[SPAN] Promiscuous Mode: Capturing all LAN traffic...', cls: 'log-info' },
+      { text: '[SPAN] Packet intercepted on eth0 (copy, zero latency)', cls: 'log-success' },
+      { text: '[SPAN] Production traffic UNAFFECTED — Out-of-Band', cls: 'log-success' }
+    ],
+    packet: [
+      { label: 'Capture Mode', value: 'SPAN / Mirror Port', cls: '' },
+      { label: 'Latency Impact', value: '0.000 ms (OOB)', cls: 'safe' },
+      { label: 'Interface', value: 'eth0 (Promiscuous)', cls: '' },
+      { label: 'Fail-Safe', value: 'If sensor dies, traffic flows', cls: 'safe' }
+    ]
+  },
+  {
+    log: [
+      { text: '[ML] Loading ml_prefilter.joblib...', cls: 'log-info' },
+      { text: '[ML] Features: [entropy=7.8, port=8443, win=514, proto=TCP]', cls: 'log-info' },
+      { text: '[ML] Decision Tree Path: depth1→RIGHT, depth2→RIGHT, depth3→LEFT', cls: 'log-warn' },
+      { text: '[ML] Prediction: SUSPICIOUS (1) — Forwarding to DPI', cls: 'log-alert' }
+    ],
+    packet: [
+      { label: 'ML Model', value: 'Decision Tree (depth=5)', cls: '' },
+      { label: 'Inference Time', value: '0.08 ms', cls: 'safe' },
+      { label: 'Prediction', value: '⚠️ SUSPICIOUS', cls: 'danger' },
+      { label: 'Action', value: 'Forward to Stage 4 (DPI)', cls: 'warn' }
+    ]
+  },
+  {
+    log: [
+      { text: '[DPI] Defragmenting IP fragments...', cls: 'log-info' },
+      { text: '[DPI] Decoding Base64 payload: QkI= → 0x4242', cls: 'log-warn' },
+      { text: '[DPI] Shannon Entropy: 7.83 (THRESHOLD: 7.5) → ANOMALY', cls: 'log-alert' },
+      { text: '[DPI] Magic Bytes 0x4242 MATCHED rule_a8f3c2 (BPFDoor)', cls: 'log-alert' },
+      { text: '[ALERT] Rule: rule_a8f3c2 | Score: 95 | entropy(7.83), magic_found', cls: 'log-alert' },
+      { text: '[DPI] Saving to quarantine_buffer.pcap...', cls: 'log-warn' }
+    ],
+    packet: [
+      { label: 'Shannon Entropy', value: '7.83 / 8.0 (HIGH)', cls: 'danger' },
+      { label: 'Magic Bytes', value: '0x4242 — MATCHED', cls: 'danger' },
+      { label: 'Threat Score', value: '95 / 100', cls: 'danger' },
+      { label: 'Rule Matched', value: 'rule_a8f3c2 (BPFDoor)', cls: 'warn' },
+      { label: 'Quarantine', value: '✅ Saved to buffer', cls: 'safe' },
+      { label: 'Syslog Output', value: '✅ Written to .log', cls: 'safe' }
+    ]
+  },
+  {
+    log: [
+      { text: '[WEBHOOK] Constructing HMAC-SHA256 signature...', cls: 'log-info' },
+      { text: '[WEBHOOK] POST /api/v1/alert → 192.168.1.1:5000', cls: 'log-warn' },
+      { text: '[AGENT] Signature Verified ✓ (Zero-Trust Handshake)', cls: 'log-success' },
+      { text: '[AGENT] Whitelist Check: 10.0.2.15 NOT whitelisted', cls: 'log-info' },
+      { text: '[AGENT] Idempotency Cache: NEW IP — proceeding', cls: 'log-info' }
+    ],
+    packet: [
+      { label: 'Auth Method', value: 'HMAC-SHA256', cls: '' },
+      { label: 'Signature', value: 'a7f3...9c2e (Valid ✓)', cls: 'safe' },
+      { label: 'Whitelist', value: '10.0.2.15 — NOT listed', cls: 'warn' },
+      { label: 'LRU Cache', value: 'First offense → PROCEED', cls: '' }
+    ]
+  },
+  {
+    log: [
+      { text: '[PLUGIN] Loading pfsense_driver.py...', cls: 'log-info' },
+      { text: '[PLUGIN] SSH → admin@192.168.1.1:22', cls: 'log-warn' },
+      { text: '[PLUGIN] easyrule block wan 10.0.2.15', cls: 'log-alert' },
+      { text: '[FIREWALL] ████ IP 10.0.2.15 BLOCKED ████', cls: 'log-alert' },
+      { text: '[AGENT] Stored in idempotency cache (agent_cache.db)', cls: 'log-success' }
+    ],
+    packet: [
+      { label: 'Firewall', value: 'pfSense (via SSH Plugin)', cls: '' },
+      { label: 'Command', value: 'easyrule block wan 10.0.2.15', cls: 'danger' },
+      { label: 'Result', value: '🛡️ IP PERMANENTLY BLOCKED', cls: 'danger' },
+      { label: 'Cache', value: 'Stored in SQLite LRU', cls: 'safe' }
+    ]
+  },
+  {
+    log: [
+      { text: '[INTEL] Background thread querying AlienVault OTX...', cls: 'log-info' },
+      { text: '[INTEL] GET /api/v1/indicators/IPv4/10.0.2.15/general', cls: 'log-info' },
+      { text: '[INTEL] Response: 14 global threat reports found', cls: 'log-alert' },
+      { text: '[INTEL] Country: Russia | Tags: rootkit, backdoor, APT', cls: 'log-alert' },
+      { text: '[INTEL] ✅ CONFIRMED MALICIOUS — Block is PERMANENT', cls: 'log-success' },
+      { text: '[SYSTEM] Full pipeline complete in 47ms. Network safe.', cls: 'log-success' }
+    ],
+    packet: [
+      { label: 'API Source', value: 'AlienVault OTX (Free)', cls: '' },
+      { label: 'Global Reports', value: '14 threat pulses', cls: 'danger' },
+      { label: 'Verdict', value: '✅ CONFIRMED MALICIOUS', cls: 'danger' },
+      { label: 'False Positive?', value: 'NO — Block upheld', cls: 'safe' },
+      { label: 'Total Latency', value: '47 ms end-to-end', cls: 'safe' },
+      { label: 'Human Needed?', value: 'ZERO intervention', cls: 'safe' }
+    ]
+  }
+];
+
+let currentStep = -1;
+
+function addLog(text, cls) {
+  const term = document.getElementById('terminal');
+  const line = document.createElement('div');
+  line.className = 'log-line ' + cls;
+  line.textContent = text;
+  term.appendChild(line);
+  term.scrollTop = term.scrollHeight;
+}
+
+function showPacket(fields) {
+  const display = document.getElementById('packetDisplay');
+  const container = document.getElementById('packetFields');
+  display.style.display = 'block';
+  container.innerHTML = '';
+  fields.forEach(f => {
+    const div = document.createElement('div');
+    div.className = 'pf';
+    div.innerHTML = `<div class="pf-label">${f.label}</div><div class="pf-value ${f.cls}">${f.value}</div>`;
+    container.appendChild(div);
+  });
+}
+
+function nextStep() {
+  currentStep++;
+  if (currentStep >= stages.length) {
+    document.getElementById('nextBtn').disabled = true;
+    document.getElementById('stepCounter').textContent = '✅ Pipeline Complete — Threat Neutralized in 47ms';
+    return;
+  }
+
+  const btn = document.getElementById('nextBtn');
+  btn.textContent = currentStep < stages.length - 1 ? '▶ Next Stage' : '▶ Final Verdict';
+
+  // Update stage visuals
+  for (let i = 0; i < 7; i++) {
+    const s = document.getElementById('s' + i);
+    const a = document.getElementById('a' + i);
+    if (i < currentStep) {
+      s.className = 'stage done';
+      if (a) a.className = 'arrow';
+    } else if (i === currentStep) {
+      s.className = 'stage active' + (currentStep >= 5 ? ' blocked' : '');
+      if (a) a.className = 'arrow active';
+    } else {
+      s.className = 'stage';
+      if (a) a.className = 'arrow';
+    }
+  }
+
+  // Add logs with staggered animation
+  const stage = stages[currentStep];
+  stage.log.forEach((l, i) => {
+    setTimeout(() => addLog(l.text, l.cls), i * 300);
+  });
+
+  // Show packet metadata
+  showPacket(stage.packet);
+
+  // Update counter
+  const names = ['Attacker Launch', 'SPAN Capture', 'ML Triage', 'Deep Packet Inspection', 'HMAC Webhook', 'Firewall Enforcement', 'Threat Intel Confirmation'];
+  document.getElementById('stepCounter').textContent = `Stage ${currentStep + 1}/7: ${names[currentStep]}`;
+}
+
+function resetDemo() {
+  currentStep = -1;
+  document.getElementById('terminal').innerHTML = '';
+  document.getElementById('packetDisplay').style.display = 'none';
+  document.getElementById('nextBtn').disabled = false;
+  document.getElementById('nextBtn').textContent = '▶ Start Attack';
+  document.getElementById('stepCounter').textContent = 'Ready to launch attack simulation';
+  for (let i = 0; i < 7; i++) {
+    document.getElementById('s' + i).className = 'stage';
+    const a = document.getElementById('a' + i);
+    if (a) a.className = 'arrow';
+  }
+}
+</script>
+</body>
+</html>

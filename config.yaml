@@ -31,7 +31,7 @@ ENTROPY_MIN_PAYLOAD_SIZE: 32 # Only calculate entropy on payloads >= this many b
 QUARANTINE_BUFFER: "quarantine_buffer.pcap"
 BENIGN_BUFFER: "benign_buffer.pcap"
 
-# --- Live Sniffing (Commented out for now) ---
+# --- Live Sniffing ---
 # SNIFF_INTERFACE: "eth0"
 # SNIFF_FILTER: "ip"
 

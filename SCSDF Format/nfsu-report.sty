@@ -1,0 +1,412 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{nfsu-report}[2026/01/30 NFSU Report Style]
+
+% ---------- Required packages ----------
+\RequirePackage{graphicx}
+\RequirePackage{fancyhdr}
+\RequirePackage{transparent}
+\RequirePackage{eso-pic}
+\RequirePackage{etoolbox}
+\RequirePackage{shadowtext}
+\RequirePackage[a4paper,margin=1in]{geometry}
+\RequirePackage{textcase}
+\RequirePackage{ifthen}
+\RequirePackage[acronym,nopostdot,nonumberlist]{glossaries}
+\RequirePackage{titlesec}
+\AtBeginDocument{\makeglossaries}
+%----------- Colors -------------------------
+\definecolor{NFSUDarkRed}{RGB}{139,0,0}
+\definecolor{NFSUDarkBlue}{RGB}{0, 51, 102} 
+\definecolor{NFSUSkyBlue}{RGB}{91, 155, 213} 
+\definecolor{NFSUGray}{RGB}{120,120,120}
+
+%-------------- Helper command for TOC entry ----------------
+\newcommand{\NFSUAddToTOC}[1]{\addcontentsline{toc}{chapter}{#1}}
+
+% ---------- Storage macros (defaults empty) ----------
+\newcommand{\NFSUUniversity}{National Forensic Sciences University}
+
+
+\newcommand{\ProjectTitle}{}
+\newcommand{\ReportType}{}
+\newcommand{\Honorific}{}
+\newcommand{\StudentName}{}
+\newcommand{\EnrollmentNo}{}
+\newcommand{\ProgramName}{}
+\newcommand{\ProgramSemester}{}
+\newcommand{\NFSUSchool}{}
+\newcommand{\SupervisorName}{}
+\newcommand{\SupervisorDesig}{}
+\newcommand{\CampusLocation}{}
+\newcommand{\CampusPin}{}
+\newcommand{\CampusState}{}
+\newcommand{\CampusCountry}{}
+\newcommand{\ReportMonthYear}{}
+\newcommand{\ReportPeriodFrom}{}
+\newcommand{\ReportPeriodTo}{}
+
+\newcommand{\NFSULogoFile}{NFSULOGO} % without extension is ok
+\newcommand{\NFSUEmblemFile}{NFSUEMBLEM} % without extension is ok
+
+% ---------- Setter commands (student uses these ONCE) ----------
+\newcommand{\setProjectTitle}[1]{\renewcommand{\ProjectTitle}{#1}}
+\newcommand{\setReportType}[1]{\renewcommand{\ReportType}{#1}}
+\newcommand{\setHonorific}[1]{\renewcommand{\Honorific}{#1}}
+\newcommand{\Pronoun}{%
+	\ifthenelse{\equal{\Honorific}{Mr}}%
+	{His}%
+	{Her}%
+}
+\newcommand{\setStudentName}[1]{\renewcommand{\StudentName}{#1}}
+\newcommand{\setEnrollmentNo}[1]{\renewcommand{\EnrollmentNo}{#1}}
+\newcommand{\setProgramName}[1]{\renewcommand{\ProgramName}{#1}}
+\newcommand{\setProgramSemester}[1]{\renewcommand{\ProgramSemester}{#1}}
+\newcommand{\setSchoolName}[1]{\renewcommand{\NFSUSchool}{#1}}
+\newcommand{\setSupervisorName}[1]{\renewcommand{\SupervisorName}{#1}}
+\newcommand{\setSupervisorDesig}[1]{\renewcommand{\SupervisorDesig}{#1}}
+\newcommand{\setCampusAdress}[4]{
+	\renewcommand{\CampusLocation}{#1}
+	\renewcommand{\CampusPin}{#2}
+	\renewcommand{\CampusState}{#3}
+	\renewcommand{\CampusCountry}{#4}
+}
+\newcommand{\setReportMonthYear}[1]{\renewcommand{\ReportMonthYear}{#1}}
+\newcommand{\setReportPlace}[1]{\renewcommand{\ReportPlace}{#1}}
+\newcommand{\setReportPeriod}[2]{%
+	\renewcommand{\ReportPeriodFrom}{#1}%
+	\renewcommand{\ReportPeriodTo}{#2}%
+}
+\newcommand{\setNFSULogo}[1]{\renewcommand{\NFSULogoFile}{#1}}
+\newcommand{\setNFSUEmblem}[1]{\renewcommand{\NFSUEmblemFile}{#1}}
+
+% ---------- Declaration page style (ONLY when you call it) ----------
+\fancypagestyle{nfsuCertificate}{
+	\fancyhf{}
+	\renewcommand{\headrulewidth}{0pt}
+	\fancyhead[L]{\includegraphics[height=1.6cm]{\NFSUEmblemFile}}
+}
+
+% ---------- Helpers: header/footer lines + watermark ONLY for one page ----------
+\newcommand{\NFSUHeaderRule}{%
+	\noindent{\color{NFSUSkyBlue}\rule{\textwidth}{1.5pt}}\par\vspace{1cm}
+}
+
+\newcommand{\NFSUFooterRule}{%
+	\vspace{1cm}\noindent{\color{NFSUSkyBlue}\rule{\textwidth}{1.5pt}}\par
+	\vspace{2mm}
+	\noindent
+	 \noindent\hfill{\color{NFSUGray} \textbf{\thepage}\,\textbar\,P\;a\;g\;e}\par
+}
+
+% --- normal pages header ---
+\fancypagestyle{NFSUPageHFStyle}{
+	\fancyhf{} % clear
+	
+	% header row text
+	\fancyhead[L]{\color{NFSUGray}\StudentName}
+	\fancyhead[R]{\color{NFSUGray}\EnrollmentNo}
+	% blue rule below header
+	\renewcommand{\headrulewidth}{1.5pt}
+	\renewcommand{\headrule}{%
+		\hbox to\headwidth{%
+			\color{NFSUSkyBlue}\leaders\hrule height \headrulewidth\hfill
+		}%
+	}
+
+	% (optional) footer page label like your screenshot
+	\fancyfoot[R]{%
+		{
+			\noindent{\color{NFSUSkyBlue}\rule{\textwidth}{1.5pt}}\par
+			\vspace{2mm}
+			\noindent
+			\noindent\hfill{\color{NFSUGray} \textbf{\thepage}\,\textbar\,P\;a\;g\;e}\par
+		}%
+	}
+	\renewcommand{\footrulewidth}{0pt}
+}
+
+\newcommand{\NFSUWatermarkOn}{%
+	\AddToShipoutPictureBG{%
+		\AtPageCenter{%
+			\raisebox{-0.10\paperheight}{%
+				\makebox[0pt][c]{%
+					\transparent{0.10}%
+					\includegraphics[width=0.35\paperwidth]{\NFSULogoFile}%
+				}%
+			}%
+		}%
+	}%
+}
+\newcommand{\NFSUWatermarkOff}{\ClearShipoutPictureBG}
+
+
+
+% ---------- Title page command (ready-made) ----------
+\newcommand{\MakeTitlePage}{%
+	{
+	\clearpage
+	\thispagestyle{empty}
+	\centering
+	\shadowoffset{0.6pt}
+	\parindent=0pt
+	\parskip=8pt
+	{\large
+		\textit{\color{NFSUDarkRed}A \ReportType \space on} \par
+		\textbf{\shadowtext{\color{NFSUDarkRed}\MakeTextUppercase{\ProjectTitle}}} \par
+		\textit{\color{NFSUDarkBlue}Submitted in partial fulfillment for the Degree of} \par
+		\textbf{\color{NFSUDarkRed}\MakeTextUppercase{\ProgramName}} \\
+	}	
+	
+	\vspace{1cm}
+	
+	{\large\textit{\color{NFSUDarkRed}Submitted by}} \par
+	{\large \textbf{\color{NFSUDarkBlue}\MakeTextUppercase{\Honorific.\StudentName}}} \par
+	{\textbf{\color{NFSUDarkBlue}(\EnrollmentNo)}}
+	
+	\vspace{1cm}
+	
+	{\large\textit{\color{NFSUDarkRed}Under The Supervision of}} \par
+	{\large \textbf{\color{NFSUDarkBlue}\MakeTextUppercase{\SupervisorName}}} \par
+	{\textbf{\color{NFSUDarkBlue}(\SupervisorDesig)}}
+	
+	\vspace{1cm}
+	{\large\textit{\color{NFSUDarkRed}Submitted to}} \par
+	\includegraphics[width=4cm]{\NFSULogoFile} \\ \par
+	
+	\vspace{1cm}
+	{\large \textbf{\color{NFSUDarkRed}\MakeTextUppercase{\NFSUSchool}}} \par  
+	{\large \textbf{\color{NFSUDarkRed}NATIONAL FORENSIC SCIENCES UNIVERSITY}} \par
+	{\large \textbf{\color{NFSUDarkRed}{\MakeTextUppercase{\CampusLocation -\CampusPin, \CampusState, \CampusCountry}.}}} \par
+	{\large \textbf{\color{NFSUDarkRed}\ReportMonthYear}\\\vfill}
+	%{\Large \textbf{\color{NFSUDarkRed}\ReportMonthYear\\\vfill}
+	}
+	\clearpage
+}
+
+
+% ---------- Declaration page command (ready-made) ----------
+\newcommand{\MakeDeclarationPage}{%
+	\clearpage
+	\thispagestyle{nfsuCertificate}
+	\NFSUAddToTOC{Declaration By Student}
+	\NFSUHeaderRule
+	\NFSUWatermarkOn
+	\begin{center}
+		\textbf{\large DECLARATION BY STUDENT}
+	\end{center}
+	\vspace{1cm}
+	\textit{I hereby declare that the work being presented in this Report titled \textbf{\ProjectTitle} by me i.e. \textbf{\StudentName}, having Enrolment Number \textbf{\EnrollmentNo}, and submitted to the \NFSUSchool at National Forensic Sciences University, \CampusLocation; is my original work carried out during the period of \textbf{\ReportPeriodFrom} to \textbf{\ReportPeriodTo} under the supervision of \textbf{\SupervisorName}. I have complied it with the School’s Ethical Code of Conduct and have duly acknowledged all sources through proper citations and references. The plagiarism check confirms that the overall similarity index is within 10\%.}
+	\vspace{2cm}
+	
+	\noindent\rule{6cm}{0.4pt}\\
+	(\textbf{\StudentName})
+	\vfill
+	\NFSUFooterRule
+	\clearpage
+}
+
+% ---------- Guide Certificate page command (ready-made) ----------
+
+\newcommand{\MakeGuideCertificate}{%
+	\clearpage
+	\thispagestyle{nfsuCertificate}
+	\NFSUAddToTOC{Certificate From Guide}
+	\NFSUHeaderRule
+	\NFSUWatermarkOn
+	\begin{center}
+		\textbf{\large CERTIFICATE FROM GUIDE}
+	\end{center}
+	\vspace{1cm}
+	\textit{I hereby certify that the report titled \textbf{\ProjectTitle}, embodies the result of bonafide project work done by \textbf{\StudentName} of the \textbf{Semester - \ProgramSemester},  having enrollment number \textbf{\EnrollmentNo} for the degree of \textbf{\ProgramName} in the \textbf{\NFSUSchool} of the \textbf{National Forensic Sciences University, \CampusLocation, \CampusState – \CampusCountry} under my guidance and supervision. I further certify that this is an original work and that whatever material obtained and used from other sources has been duly acknowledged in the report. This work has not been submitted for any degree or diploma of any university or institute.}
+	\vspace{1cm}
+	
+	\noindent\textbf{\textit{Date:}}\\
+	
+	\vspace{0.1cm}
+	
+	\noindent\textbf{\textit{Place:\space\CampusLocation, \CampusState, \CampusCountry}}\\
+	
+	\vspace{2.5cm}
+	
+	\noindent\hfill
+	\begin{minipage}{0.60\textwidth}
+		\centering
+		\textit{\textbf{\SupervisorName\\
+		\SupervisorDesig\\
+		\NFSUSchool\\
+		National Forensic Sciences University\\
+		\CampusLocation, \CampusState--\CampusCountry, \CampusPin}}
+	\end{minipage}
+	
+	\vfill
+	\NFSUFooterRule
+	\clearpage
+}
+
+
+
+% ---------- Certificate page command (ready-made) ----------
+
+\newcommand{\MakeCertificate}{%
+	\clearpage
+	\thispagestyle{nfsuCertificate}
+		\NFSUAddToTOC{Certificate}
+	\NFSUHeaderRule
+	\NFSUWatermarkOn
+	\begin{center}
+		\textbf{\large CERTIFICATE}
+	\end{center}
+	\textit{This is to certify that the viva-voce of \textbf{\Honorific. \StudentName} of the \textbf{\NFSUSchool, National Forensic Sciences University, \CampusLocation, \CampusState, \CampusCountry-\CampusPin} was conducted at the \textbf{National Forensic Sciences University, \CampusLocation Campus.}}\\
+	
+	\vspace{1cm}
+	\noindent
+	\textbf{\textit{\SupervisorName\\ \SupervisorDesig}}
+	
+	\vspace{1.5cm}
+	\noindent\hfill
+	\begin{minipage}{0.60\textwidth}
+		\centering
+		\textit{\textbf{Associate Dean/Dean\\
+				\NFSUSchool\\
+				National Forensic Sciences University\\
+				\CampusLocation, \CampusState--\CampusCountry, \CampusPin}}
+	\end{minipage}
+	\vspace{1cm}
+	\hrule
+	\vspace{1cm}
+	\textit{This is to certify that \textbf{\Honorific. \StudentName}, of the Semester \ProgramSemester, having enrollment number \textbf{\EnrollmentNo} has submitted the \ReportType entitled \textbf{\ProjectTitle} for the partial fulfilment of the requirement for the award of the degree of \textbf{\ProgramName} in the \textbf{\textbf{\NFSUSchool} at National Forensic Sciences University, \CampusLocation, \CampusState-\CampusCountry}. \Pronoun\space\ReportType titled \textbf{\ProjectTitle} was evaluated and found satisfactory.}
+		
+	\vspace{2cm}
+	
+	\noindent
+	\begin{minipage}{0.50\textwidth}
+		\centering
+		\textit{\textbf{Name and Signature of \\Internal Examiner}}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.50\textwidth}
+		\centering
+		\textit{\textbf{Name and Signature of \\External Examiner}}
+	\end{minipage}
+	\vspace{1cm}
+	
+	\noindent\textbf{\textit{Date:}}\\
+	
+	\vspace{0.1cm}
+	
+	\noindent\textbf{\textit{Place:\space\CampusLocation, \CampusState, \CampusCountry}}\\
+	
+	\vfill
+	\NFSUFooterRule
+	\clearpage
+}
+
+\newcommand{\NFSUFrontHeading}[1]{%
+	\begin{center}
+		\underline{\large \textbf{#1}}
+	\end{center}
+	\vspace{0.8cm}
+}
+
+
+\newcommand{\MakeListOfAbbreviations}{%
+	\clearpage
+	\NFSUAddToTOC{List of Abbreviations}
+	\pagestyle{NFSUPageHFStyle}%
+	\NFSUFrontHeading{LIST OF ABBREVIATIONS}%
+	\renewcommand{\glossarysection}[2][]{}
+	\printglossary[type=\acronymtype]
+	\clearpage
+}
+
+
+
+
+% ---------- Suppress built-in headings for TOC/LOT/LOF (SAFE WAY) ----------
+\makeatletter
+\newcommand{\NFSUToCNoTitle}{\@starttoc{toc}}
+\newcommand{\NFSUListOfTablesNoTitle}{\@starttoc{lot}}
+\newcommand{\NFSUListOfFiguresNoTitle}{\@starttoc{lof}}
+\makeatother
+
+% ---------- TOC / LOT / LOF ----------
+\newcommand{\MakeTOC}{%
+	\clearpage
+	\NFSUAddToTOC{Table of Contents}%
+	\pagestyle{NFSUPageHFStyle}%
+	\NFSUWatermarkOn%
+	\NFSUFrontHeading{TABLE OF CONTENTS}%
+	\NFSUToCNoTitle
+	\clearpage
+}
+
+\newcommand{\MakeListOfTables}{%
+	\clearpage
+	\NFSUAddToTOC{List of Tables}%
+	\pagestyle{NFSUPageHFStyle}%
+	\NFSUWatermarkOn%
+	\NFSUFrontHeading{LIST OF TABLES}%
+	\NFSUListOfTablesNoTitle
+	\clearpage
+}
+
+\newcommand{\MakeListOfFigures}{%
+	\clearpage
+	\NFSUAddToTOC{List of Figures}%
+	\pagestyle{NFSUPageHFStyle}%
+	\NFSUWatermarkOn%
+	\NFSUFrontHeading{LIST OF FIGURES}%
+	\NFSUListOfFiguresNoTitle
+	\clearpage
+}
+
+
+% --------- Heading styles (Chapter/Section/Subsection/Subsubsection) ---------
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+% CHAPTER: 2.  SPECIFICATIONS FOR ...
+% CHAPTER formatting
+\RequirePackage{titlesec}
+% Make chapter starting pages also use our fancy header/footer
+\RequirePackage{etoolbox}
+\patchcmd{\chapter}{\thispagestyle{plain}}{\thispagestyle{NFSUPageHFStyle}}{}{}
+% -------- Chapter Style --------
+\titleformat{\chapter}[block]
+{\centering\bfseries\Large\color{NFSUSkyBlue}}
+{\thechapter.\hspace{0.6em}}
+{0pt}
+{\MakeTextUppercase}
+\titlespacing*{\chapter}{0pt}{0.5cm}{0.6cm}
+
+% SECTION: 2.1  Preparation ...
+\titleformat{\section}[hang]
+{\bfseries\color{NFSUSkyBlue}\normalsize}
+{\thesection\hspace{1.2em}}
+{0pt}
+{}
+\titlespacing*{\section}{0pt}{0.8em}{0.4em}
+
+% SUBSECTION: 2.2  Size and Margins
+\titleformat{\subsection}[hang]
+{\bfseries\color{NFSUSkyBlue}\normalsize}
+{\thesubsection\hspace{1.2em}}
+{0pt}
+{}
+\titlespacing*{\subsection}{0pt}{0.7em}{0.35em}
+
+% SUBSUBSECTION: 2.2.1  Printing of Dissertation
+\titleformat{\subsubsection}[hang]
+{\bfseries\color{NFSUSkyBlue}\normalsize}
+{\thesubsubsection\hspace{1.2em}}
+{0pt}
+{}
+\titlespacing*{\subsubsection}{0pt}{0.6em}{0.25em}
+
+% --------- Only-number subsubsection line like "2.2.2" (no title) ----------
+\newcommand{\NFSUSubSubNumber}{%
+	\refstepcounter{subsubsection}%
+	\vspace{0.3em}%
+	{\bfseries\color{NFSUSkyBlue}\thesubsubsection}\par
+	\vspace{0.2em}%
+}

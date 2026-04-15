@@ -1,0 +1,53 @@
+\chapter{Conclusion and Future Directions}
+
+\section{Summary of Research Findings}
+
+This dissertation presented Sentinel Forge, an autonomous AI-driven network threat detection and mitigation system specifically designed to combat magic packet-based rootkit communications. The key findings are:
+
+\begin{enumerate}
+    \item The Out-of-Band architecture successfully provides full packet-level visibility (OSI Layers 3, 4, and 7) while maintaining zero impact on production network performance.
+    
+    \item The multi-layer anti-evasion pipeline achieves 100\% detection rate for payload-encoding evasion techniques (Base64, XOR) and 92.16\% overall detection rate across seven rootkit families, with a 0.00\% false positive rate on clean traffic.
+    
+    \item The Decision Tree ML pre-filter provides sub-millisecond packet triage, enabling efficient processing of high-traffic volumes by bypassing full DPI for benign traffic.
+    
+    \item The HMAC-SHA256 webhook authentication, combined with IP whitelisting, LRU rate limiting, and idempotency caching, provides a secure and resilient automated response pathway.
+    
+    \item The plugin-based firewall architecture successfully supports pfSense and Linux iptables enforcement without requiring core system modifications.
+    
+    \item The average detection-to-mitigation latency of under 50 milliseconds across 100 benchmark iterations confirms suitability for near-real-time deployment.
+\end{enumerate}
+
+\section{Technical Limitations and Challenges}
+
+The following limitations were identified during evaluation:
+
+\begin{enumerate}
+    \item \textbf{Header-Only Fragment Recovery:} Packets relying solely on TCP header fields (window size, seq, ack) with IP fragmentation show reduced detection (76.5\%) due to incomplete TCP layer recovery after reassembly.
+    
+    \item \textbf{Single-Byte XOR Limitation:} The current XOR brute-force only covers single-byte keys. Multi-byte XOR or more complex encryption schemes (AES, ChaCha20) used by advanced rootkits would evade this layer.
+    
+    \item \textbf{No TLS Inspection:} Encrypted TLS/SSL streams cannot be inspected without deploying a TLS interception proxy, which is outside the current scope.
+    
+    \item \textbf{Static Training Data:} The ML pre-filter is trained on a fixed dataset. Model drift over time may degrade classification accuracy without periodic retraining.
+    
+    \item \textbf{OOB Response Delay:} Unlike inline IPS, the OOB architecture cannot prevent the first malicious packet from reaching the target. It can only react after detection, creating a brief exposure window.
+\end{enumerate}
+
+\section{Future Scope}
+
+\begin{enumerate}
+    \item \textbf{eBPF-Based Kernel Sensor:} Replacing Scapy-based packet capture with an eBPF program for line-speed packet processing directly in the Linux kernel, enabling 10 Gbps+ throughput.
+    
+    \item \textbf{Deep Learning Enhancements:} Upgrading the pre-filter to LSTM or Transformer-based sequence models for detecting temporal patterns in multi-packet rootkit handshakes.
+    
+    \item \textbf{TLS Deep Inspection:} Integrating mitmproxy or SSL bump capabilities to extend detection into encrypted application-layer streams.
+    
+    \item \textbf{Distributed Multi-Sensor Deployment:} Scaling to multiple OOB sensors across network segments with centralized alert correlation and coordinated response.
+    
+    \item \textbf{MITRE ATT\&CK Mapping:} Aligning detection rules to ATT\&CK techniques (T1205 --- Traffic Signaling, T1014 --- Rootkit) for enterprise threat intelligence integration.
+    
+    \item \textbf{Containerized Deployment:} Packaging Sentinel Forge as Docker containers for simplified deployment in cloud and hybrid environments.
+    
+    \item \textbf{Real-Time SOC Dashboard:} Development of a web-based visualization interface with live threat maps, alert timelines, and system health monitoring.
+\end{enumerate}

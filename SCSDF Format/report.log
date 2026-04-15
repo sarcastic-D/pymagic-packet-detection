@@ -1,0 +1,1072 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.11.8)  6 APR 2026 20:54
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**./report.tex
+(report.tex
+LaTeX2e <2025-06-01> patch level 1
+L3 programming layer <2025-10-09>
+(C:\Program Files\MiKTeX\tex/latex/base\report.cls
+Document Class: report 2025/01/22 v1.4n Standard LaTeX document class
+(C:\Program Files\MiKTeX\tex/latex/base\size12.clo
+File: size12.clo 2025/01/22 v1.4n Standard LaTeX file (size option)
+)
+\c@part=\count275
+\c@chapter=\count276
+\c@section=\count277
+\c@subsection=\count278
+\c@subsubsection=\count279
+\c@paragraph=\count280
+\c@subparagraph=\count281
+\c@figure=\count282
+\c@table=\count283
+\abovecaptionskip=\skip49
+\belowcaptionskip=\skip50
+\bibindent=\dimen148
+) (nfsu-report.sty
+Package: nfsu-report 2026/01/30 NFSU Report Style
+
+(C:\Program Files\MiKTeX\tex/latex/graphics\graphicx.sty
+Package: graphicx 2024/12/31 v1.2e Enhanced LaTeX Graphics (DPC,SPQR)
+
+(C:\Program Files\MiKTeX\tex/latex/graphics\keyval.sty
+Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
+\KV@toks@=\toks17
+)
+(C:\Program Files\MiKTeX\tex/latex/graphics\graphics.sty
+Package: graphics 2024/08/06 v1.4g Standard LaTeX Graphics (DPC,SPQR)
+
+(C:\Program Files\MiKTeX\tex/latex/graphics\trig.sty
+Package: trig 2023/12/02 v1.11 sin cos tan (DPC)
+)
+(C:\Program Files\MiKTeX\tex/latex/graphics-cfg\graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 106.
+
+(C:\Program Files\MiKTeX\tex/latex/graphics-def\pdftex.def
+File: pdftex.def 2025/09/29 v1.2d Graphics/color driver for pdftex
+))
+\Gin@req@height=\dimen149
+\Gin@req@width=\dimen150
+)
+(C:\Program Files\MiKTeX\tex/latex/fancyhdr\fancyhdr.sty
+Package: fancyhdr 2025/02/07 v5.2 Extensive control of page headers and footers
+
+\f@nch@headwidth=\skip51
+\f@nch@offset@elh=\skip52
+\f@nch@offset@erh=\skip53
+\f@nch@offset@olh=\skip54
+\f@nch@offset@orh=\skip55
+\f@nch@offset@elf=\skip56
+\f@nch@offset@erf=\skip57
+\f@nch@offset@olf=\skip58
+\f@nch@offset@orf=\skip59
+\f@nch@height=\skip60
+\f@nch@footalignment=\skip61
+\f@nch@widthL=\skip62
+\f@nch@widthC=\skip63
+\f@nch@widthR=\skip64
+\@temptokenb=\toks18
+)
+(C:\Program Files\MiKTeX\tex/latex/transparent\transparent.sty
+Package: transparent 2025-06-23 v1.6 Transparency with color stacks
+
+(C:\Program Files\MiKTeX\tex/latex/transparent\transparent-nometadata.sty
+Package: transparent-nometadata 2025-06-23 v1.6 Transparency via pdfTeX's color
+ stack (HO)
+
+(C:\Program Files\MiKTeX\tex/generic/iftex\iftex.sty
+Package: iftex 2024/12/12 v1.0g TeX engine tests
+)
+(C:\Program Files\MiKTeX\tex/latex/auxhook\auxhook.sty
+Package: auxhook 2019-12-17 v1.6 Hooks for auxiliary files (HO)
+)))
+(C:\Program Files\MiKTeX\tex/latex/eso-pic\eso-pic.sty
+Package: eso-pic 2025/12/10 v3.0d eso-pic (RN)
+\ESO@tempdima=\dimen151
+\ESO@tempdimb=\dimen152
+
+(C:\Program Files\MiKTeX\tex/latex/xcolor\xcolor.sty
+Package: xcolor 2024/09/29 v3.02 LaTeX color extensions (UK)
+
+(C:\Program Files\MiKTeX\tex/latex/graphics-cfg\color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Driver file: pdftex.def on input line 274.
+
+(C:\Program Files\MiKTeX\tex/latex/graphics\mathcolor.ltx)
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1349.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1353.
+Package xcolor Info: Model `RGB' extended on input line 1365.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1367.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1368.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1369.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1370.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1371.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1372.
+))
+(C:\Program Files\MiKTeX\tex/latex/etoolbox\etoolbox.sty
+Package: etoolbox 2025/10/02 v2.5m e-TeX tools for LaTeX (JAW)
+\etb@tempcnta=\count284
+)
+(C:\Program Files\MiKTeX\tex/latex/shadowtext\shadowtext.sty
+Package: shadowtext 2012/05/07 v0.3 Shadow Text
+\st@shadowoffsetx=\skip65
+\st@shadowoffsety=\skip66
+\st@temp@width=\skip67
+\st@temp@height=\skip68
+\st@pic@width=\skip69
+\st@pic@height=\skip70
+)
+(C:\Program Files\MiKTeX\tex/latex/geometry\geometry.sty
+Package: geometry 2020/01/02 v5.9 Page Geometry
+
+(C:\Program Files\MiKTeX\tex/generic/iftex\ifvtex.sty
+Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
+)
+\Gm@cnth=\count285
+\Gm@cntv=\count286
+\c@Gm@tempcnt=\count287
+\Gm@bindingoffset=\dimen153
+\Gm@wd@mp=\dimen154
+\Gm@odd@mp=\dimen155
+\Gm@even@mp=\dimen156
+\Gm@layoutwidth=\dimen157
+\Gm@layoutheight=\dimen158
+\Gm@layouthoffset=\dimen159
+\Gm@layoutvoffset=\dimen160
+\Gm@dimlist=\toks19
+
+(C:\Program Files\MiKTeX\tex/latex/geometry\geometry.cfg))
+(C:\Program Files\MiKTeX\tex/latex/textcase\textcase.sty
+Package: textcase 2025/02/16 v1.05 Text only upper/lower case changing (DPC)
+Package textcase Info: Defining Legacy names on input line 20.
+)
+(C:\Program Files\MiKTeX\tex/latex/base\ifthen.sty
+Package: ifthen 2024/03/16 v1.1e Standard LaTeX ifthen package (DPC)
+)
+(C:\Program Files\MiKTeX\tex/latex/glossaries/base\glossaries.sty
+Package: glossaries 2025/11/09 v4.9 (NLCT)
+
+(C:\Program Files\MiKTeX\tex/latex/xkeyval\xkeyval.sty
+Package: xkeyval 2022/06/16 v2.9 package option processing (HA)
+
+(C:\Program Files\MiKTeX\tex/generic/xkeyval\xkeyval.tex
+(C:\Program Files\MiKTeX\tex/generic/xkeyval\xkvutils.tex
+\XKV@toks=\toks20
+\XKV@tempa@toks=\toks21
+)
+\XKV@depth=\count288
+File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
+))
+(C:\Program Files\MiKTeX\tex/latex/mfirstuc\mfirstuc.sty
+Package: mfirstuc 2025/04/03 v2.09 (NLCT)
+\@glsmfirst=\toks22
+\@glsmrest=\toks23
+)
+(C:\Program Files\MiKTeX\tex/latex/xfor\xfor.sty
+Package: xfor 2009/02/05 v1.05 (NLCT)
+)
+(C:\Program Files\MiKTeX\tex/latex/amsmath\amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks24
+\ex@=\dimen161
+)
+(C:\Program Files\MiKTeX\tex/latex/datatool\datatool-base.sty
+Package: datatool-base 2025/12/04 v3.4.3 (NLCT)
+
+(C:\Program Files\MiKTeX\tex/latex/amsmath\amsmath.sty
+Package: amsmath 2025/06/16 v2.17y AMS math features
+\@mathmargin=\skip71
+
+For additional information on amsmath, use the `?' option.
+(C:\Program Files\MiKTeX\tex/latex/amsmath\amstext.sty
+Package: amstext 2024/11/17 v2.01 AMS text
+)
+(C:\Program Files\MiKTeX\tex/latex/amsmath\amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+\pmbraise@=\dimen162
+)
+(C:\Program Files\MiKTeX\tex/latex/amsmath\amsopn.sty
+Package: amsopn 2022/04/08 v2.04 operator names
+)
+\inf@bad=\count289
+LaTeX Info: Redefining \frac on input line 233.
+\uproot@=\count290
+\leftroot@=\count291
+LaTeX Info: Redefining \overline on input line 398.
+LaTeX Info: Redefining \colon on input line 409.
+\classnum@=\count292
+\DOTSCASE@=\count293
+LaTeX Info: Redefining \ldots on input line 495.
+LaTeX Info: Redefining \dots on input line 498.
+LaTeX Info: Redefining \cdots on input line 619.
+\Mathstrutbox@=\box53
+\strutbox@=\box54
+LaTeX Info: Redefining \big on input line 721.
+LaTeX Info: Redefining \Big on input line 722.
+LaTeX Info: Redefining \bigg on input line 723.
+LaTeX Info: Redefining \Bigg on input line 724.
+\big@size=\dimen163
+LaTeX Font Info:    Redeclaring font encoding OML on input line 742.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 743.
+\macc@depth=\count294
+LaTeX Info: Redefining \bmod on input line 904.
+LaTeX Info: Redefining \pmod on input line 909.
+LaTeX Info: Redefining \smash on input line 939.
+LaTeX Info: Redefining \relbar on input line 969.
+LaTeX Info: Redefining \Relbar on input line 970.
+\c@MaxMatrixCols=\count295
+\dotsspace@=\muskip17
+\c@parentequation=\count296
+\dspbrk@lvl=\count297
+\tag@help=\toks25
+\row@=\count298
+\column@=\count299
+\maxfields@=\count300
+\andhelp@=\toks26
+\eqnshift@=\dimen164
+\alignsep@=\dimen165
+\tagshift@=\dimen166
+\tagwidth@=\dimen167
+\totwidth@=\dimen168
+\lineht@=\dimen169
+\@envbody=\toks27
+\multlinegap=\skip72
+\multlinetaggap=\skip73
+\mathdisplay@stack=\toks28
+LaTeX Info: Redefining \[ on input line 2949.
+LaTeX Info: Redefining \] on input line 2950.
+)
+(C:\Program Files\MiKTeX\tex/latex/tracklang\tracklang.sty
+Package: tracklang 2025/03/11 v1.6.6 (NLCT) Track Languages
+
+(C:\Program Files\MiKTeX\tex/generic/tracklang\tracklang.tex))
+\l__datatool_tmpa_int=\count301
+\l__datatool_tmpb_int=\count302
+\l__datatool_tmpc_int=\count303
+\l__datatool_tmpd_int=\count304
+\l__datatool_count_int=\count305
+\l__datatool_tmp_datatype_int=\count306
+\l__datatool_tmpa_dim=\dimen170
+\l__datatool_tmpb_dim=\dimen171
+
+(C:\Program Files\MiKTeX\tex/latex/datatool\datatool-l3fp.def
+File: datatool-l3fp.def 2025/12/04 v3.4.3 (NLCT)
+)
+\@dtl@toks=\toks29
+\@dtl@tmpcount=\count307
+\dtl@tmplength=\skip74
+\l__datatool_measure_box=\box55
+\dtl@sortresult=\count308
+
+(C:\Program Files\MiKTeX\tex/latex/datatool\datatool-utf8.ldf
+File: datatool-utf8.ldf 2025/12/04 v3.4.3 (NLCT)
+)
+\@dtl@datatype=\count309
+\c_datatool_unknown_int=\count310
+\l__datatool_year_int=\count311
+\l__datatool_month_int=\count312
+\l__datatool_day_int=\count313
+\l__datatool_hour_int=\count314
+\l__datatool_minute_int=\count315
+\l__datatool_second_int=\count316
+\l__datatool_tzhour_int=\count317
+\l__datatool_tzminute_int=\count318
+\l__datatool_julian_int=\count319
+\l__datatool_local_julian_int=\count320
+\l__datatool_prefix_int=\count321
+\l__datatool_suffix_int=\count322
+\@dtl@foreach@level=\count323
+\dtl@codeA=\count324
+\dtl@codeB=\count325
+)
+\gls@level=\count326
+\@gls@tmpb=\toks30
+\gls@tmplen=\skip75
+\l__glossaries_tmpa_dim=\dimen172
+\l__glossaries_tmpb_dim=\dimen173
+\glskeylisttok=\toks31
+\glslabeltok=\toks32
+\glsshorttok=\toks33
+\glslongtok=\toks34
+
+(C:\Program Files\MiKTeX\tex/latex/glossaries/styles\glossary-hypernav.sty
+Package: glossary-hypernav 2025/11/09 v4.9 (NLCT)
+)
+(C:\Program Files\MiKTeX\tex/latex/glossaries/styles\glossary-list.sty
+Package: glossary-list 2025/11/09 v4.9 (NLCT)
+\glslistdottedwidth=\skip76
+)
+(C:\Program Files\MiKTeX\tex/latex/glossaries/styles\glossary-long.sty
+Package: glossary-long 2025/11/09 v4.9 (NLCT)
+
+(C:\Program Files\MiKTeX\tex/latex/tools\longtable.sty
+Package: longtable 2024-12-18 v4.23 Multi-page Table package (DPC)
+\LTleft=\skip77
+\LTright=\skip78
+\LTpre=\skip79
+\LTpost=\skip80
+\LTchunksize=\count327
+\LTcapwidth=\dimen174
+\LT@head=\box56
+\LT@firsthead=\box57
+\LT@foot=\box58
+\LT@lastfoot=\box59
+\LT@gbox=\box60
+\LT@cols=\count328
+\LT@rows=\count329
+\c@LT@tables=\count330
+\c@LT@chunks=\count331
+\LT@p@ftn=\toks35
+)
+\glsdescwidth=\skip81
+\glspagelistwidth=\skip82
+)
+(C:\Program Files\MiKTeX\tex/latex/glossaries/styles\glossary-super.sty
+Package: glossary-super 2025/11/09 v4.9 (NLCT)
+
+(C:\Program Files\MiKTeX\tex/latex/supertabular\supertabular.sty
+Package: supertabular 2025/06/26 v4.2d the supertabular environment
+\c@tracingst=\count332
+\ST@wd=\dimen175
+\ST@rightskip=\skip83
+\ST@leftskip=\skip84
+\ST@parfillskip=\skip85
+\ST@pageleft=\dimen176
+\ST@headht=\dimen177
+\ST@tailht=\dimen178
+\ST@pagesofar=\dimen179
+\ST@pboxht=\dimen180
+\ST@rowht=\dimen181
+\ST@prevht=\dimen182
+\ST@toadd=\dimen183
+\ST@dimen=\dimen184
+\ST@pbox=\box61
+))
+(C:\Program Files\MiKTeX\tex/latex/glossaries/styles\glossary-tree.sty
+Package: glossary-tree 2025/11/09 v4.9 (NLCT)
+\l__glossaries_tree_max_known_level_int=\count333
+\l__glossaries_tree_offset_dim=\dimen185
+\l__glossaries_tree_namewidth_dim=\dimen186
+\l__glossaries_tree_symbolwidth_dim=\dimen187
+\l__glossaries_tree_prenamesym_width_dim=\dimen188
+\l__glossaries_tree_presubnamesym_width_dim=\dimen189
+\l__glossaries_tree_namewidth_padding_dim=\dimen190
+\l__glossaries_tree_symbolwidth_padding_dim=\dimen191
+\l__glossaries_tree_namesymbolwidth_dim=\dimen192
+\l__glossaries_tree_namesymbolwidth_padding_dim=\dimen193
+\l__glossaries_tree_level_int=\count334
+\glstreeindent=\skip86
+))
+(C:\Program Files\MiKTeX\tex/latex/titlesec\titlesec.sty
+Package: titlesec 2025/01/04 v2.17 Sectioning titles
+\ttl@box=\box62
+\beforetitleunit=\skip87
+\aftertitleunit=\skip88
+\ttl@plus=\dimen194
+\ttl@minus=\dimen195
+\ttl@toksa=\toks36
+\titlewidth=\dimen196
+\titlewidthlast=\dimen197
+\titlewidthfirst=\dimen198
+))
+(C:\Program Files\MiKTeX\tex/latex/natbib\natbib.sty
+Package: natbib 2010/09/13 8.31b (PWD, AO)
+\bibhang=\skip89
+\bibsep=\skip90
+LaTeX Info: Redefining \cite on input line 694.
+\c@NAT@ctr=\count335
+) (glossary/glossary.tex)
+(C:\Program Files\MiKTeX\tex/latex/l3backend\l3backend-pdftex.def
+File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
+\l__color_backend_stack_int=\count336
+) (report.aux)
+\openout1 = `report.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+(C:\Program Files\MiKTeX\tex/context/base/mkii\supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count337
+\scratchdimen=\dimen199
+\scratchbox=\box63
+\nofMPsegments=\count338
+\nofMParguments=\count339
+\everyMPshowfont=\toks37
+\MPscratchCnt=\count340
+\MPscratchDim=\dimen256
+\MPnumerator=\count341
+\makeMPintoPDFobject=\count342
+\everyMPtoPDFconversion=\toks38
+) (C:\Program Files\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-base.sty
+Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+
+(C:\Program Files\MiKTeX\tex/generic/infwarerr\infwarerr.sty
+Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
+)
+(C:\Program Files\MiKTeX\tex/latex/grfext\grfext.sty
+Package: grfext 2019/12/03 v1.3 Manage graphics extensions (HO)
+
+(C:\Program Files\MiKTeX\tex/generic/kvdefinekeys\kvdefinekeys.sty
+Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
+))
+(C:\Program Files\MiKTeX\tex/latex/kvoptions\kvoptions.sty
+Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
+
+(C:\Program Files\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty
+Package: ltxcmds 2023-12-04 v1.26 LaTeX kernel commands for general use (HO)
+)
+(C:\Program Files\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.sty
+Package: kvsetkeys 2022-10-05 v1.19 Key value parser (HO)
+))
+(C:\Program Files\MiKTeX\tex/generic/pdftexcmds\pdftexcmds.sty
+Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO
+)
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+)
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+85.
+Package grfext Info: Graphics extension search list:
+(grfext)             [.pdf,.png,.jpg,.mps,.jpeg,.jbig2,.jb2,.PDF,.PNG,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 504.
+
+(C:\Program Files\MiKTeX\tex/latex/00miktex\epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
+))
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+*geometry* verbose mode - [ preamble ] result:
+* driver: pdftex
+* paper: a4paper
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: 
+* h-part:(L,W,R)=(72.26999pt, 452.9679pt, 72.26999pt)
+* v-part:(T,H,B)=(72.26999pt, 700.50687pt, 72.26999pt)
+* \paperwidth=597.50787pt
+* \paperheight=845.04684pt
+* \textwidth=452.9679pt
+* \textheight=700.50687pt
+* \oddsidemargin=0.0pt
+* \evensidemargin=0.0pt
+* \topmargin=-37.0pt
+* \headheight=12.0pt
+* \headsep=25.0pt
+* \topskip=12.0pt
+* \footskip=30.0pt
+* \marginparwidth=44.0pt
+* \marginparsep=10.0pt
+* \columnsep=10.0pt
+* \skip\footins=10.8pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidefalse
+* \@mparswitchfalse
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+\glswrite=\write3
+\glo@main@file=\write4
+\openout4 = `report.glo'.
+
+Package glossaries Info: Writing glossary file report.glo on input line 21.
+\glo@acronym@file=\write5
+\openout5 = `report.acn'.
+
+Package glossaries Info: Writing glossary file report.acn on input line 21.
+<NFSULOGO.png, id=1, 67.452pt x 88.8921pt>
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 22.
+(pdftex.def)             Requested size: 113.81102pt x 150.00096pt.
+
+
+[1
+
+\openout3 = `report.ist'.
+
+
+{C:/Users/himan/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map} <./NFSULOGO.p
+ng>]
+LaTeX Font Info:    Trying to load font information for OMS+cmr on input line 2
+6.
+ (C:\Program Files\MiKTeX\tex/latex/base\omscmr.fd
+File: omscmr.fd 2024/11/19 v2.5n Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 26.
+
+
+<NFSUEMBLEM.png, id=10, 794.97pt x 281.1303pt>
+File: NFSUEMBLEM.png Graphic file (type png)
+<use NFSUEMBLEM.png>
+Package pdftex.def Info: NFSUEMBLEM.png  used on input line 26.
+(pdftex.def)             Requested size: 128.72621pt x 45.52458pt.
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 49.87462pt, for example:
+(fancyhdr)                \setlength{\headheight}{49.87462pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-37.87462pt}.
+
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 26.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+[2
+
+
+
+ <./NFSUEMBLEM.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 28--28
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 28--28
+
+ []
+
+
+
+File: NFSUEMBLEM.png Graphic file (type png)
+<use NFSUEMBLEM.png>
+Package pdftex.def Info: NFSUEMBLEM.png  used on input line 28.
+(pdftex.def)             Requested size: 128.72621pt x 45.52458pt.
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 49.87462pt, for example:
+(fancyhdr)                \setlength{\headheight}{49.87462pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-37.87462pt}.
+
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 28.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 28.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+[3
+
+
+
+]
+Underfull \hbox (badness 10000) in paragraph at lines 30--30
+
+ []
+
+
+Overfull \hbox (2.61108pt too wide) in paragraph at lines 30--30
+$[]$  $[]$
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 30--30
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 30--30
+
+ []
+
+
+
+File: NFSUEMBLEM.png Graphic file (type png)
+<use NFSUEMBLEM.png>
+Package pdftex.def Info: NFSUEMBLEM.png  used on input line 30.
+(pdftex.def)             Requested size: 128.72621pt x 45.52458pt.
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 49.87462pt, for example:
+(fancyhdr)                \setlength{\headheight}{49.87462pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-37.87462pt}.
+
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 30.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 30.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 30.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+[4
+
+
+
+] (ack/ack.tex)
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 24.64995pt, for example:
+(fancyhdr)                \setlength{\headheight}{24.64995pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-12.64995pt}.
+
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 35.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 35.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 35.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 35.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+[5
+
+
+] (abstract/abstract.tex
+Underfull \hbox (badness 10000) in paragraph at lines 6--7
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 8--9
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 10--11
+
+ []
+
+)
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 24.64995pt, for example:
+(fancyhdr)                \setlength{\headheight}{24.64995pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-12.64995pt}.
+
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 37.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 37.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 37.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 37.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+[6
+
+]
+No file report.acr.
+
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 24.64995pt, for example:
+(fancyhdr)                \setlength{\headheight}{24.64995pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-12.64995pt}.
+
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 38.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 38.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 38.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 38.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+[7
+
+
+] (report.lot)
+\tf@lot=\write6
+\openout6 = `report.lot'.
+
+
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 24.64995pt, for example:
+(fancyhdr)                \setlength{\headheight}{24.64995pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-12.64995pt}.
+
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 40.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 40.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 40.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 40.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 40.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+[8
+
+
+
+] (report.lof)
+\tf@lof=\write7
+\openout7 = `report.lof'.
+
+
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 24.64995pt, for example:
+(fancyhdr)                \setlength{\headheight}{24.64995pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-12.64995pt}.
+
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 42.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 42.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 42.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 42.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 42.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 42.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+[9
+
+
+
+] (report.toc)
+\tf@toc=\write8
+\openout8 = `report.toc'.
+
+
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 24.64995pt, for example:
+(fancyhdr)                \setlength{\headheight}{24.64995pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-12.64995pt}.
+
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 44.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 44.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 44.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 44.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 44.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 44.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 44.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+[10
+
+
+
+] (Chapter1/Chapter1.tex
+Chapter 1.
+)
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 24.64995pt, for example:
+(fancyhdr)                \setlength{\headheight}{24.64995pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-12.64995pt}.
+
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 50.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 50.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 50.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 50.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 50.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 50.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 50.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 50.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+[1
+
+
+
+] (Chapter2/Chapter2.tex
+Chapter 2.
+
+Underfull \hbox (badness 10000) in paragraph at lines 4--6
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 7--8
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 9--10
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 11--12
+
+ []
+
+
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 24.64995pt, for example:
+(fancyhdr)                \setlength{\headheight}{24.64995pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-12.64995pt}.
+
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 26.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 26.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 26.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 26.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 26.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 26.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 26.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 26.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+[2
+
+
+]) (report.bbl
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 24.64995pt, for example:
+(fancyhdr)                \setlength{\headheight}{24.64995pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-12.64995pt}.
+
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 2.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 2.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 2.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 2.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 2.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 2.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 2.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 2.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+[3]
+Underfull \hbox (badness 10000) in paragraph at lines 30--33
+[]\OT1/cmr/m/n/12 802.11 stan-dard. [On-line]. Avail-able:
+ []
+
+)
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 24.64995pt, for example:
+(fancyhdr)                \setlength{\headheight}{24.64995pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-12.64995pt}.
+
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 54.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 54.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 54.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 54.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 54.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 54.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 54.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+File: NFSULOGO.png Graphic file (type png)
+<use NFSULOGO.png>
+Package pdftex.def Info: NFSULOGO.png  used on input line 54.
+(pdftex.def)             Requested size: 209.1314pt x 275.66301pt.
+[4
+
+] (report.aux)
+ ***********
+LaTeX2e <2025-06-01> patch level 1
+L3 programming layer <2025-10-09>
+ ***********
+ ) 
+Here is how much of TeX's memory you used:
+ 14810 strings out of 468080
+ 285720 string characters out of 5435839
+ 744914 words of memory out of 5000000
+ 43300 multiletter control sequences out of 15000+600000
+ 634469 words of font info for 63 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 93i,15n,105p,2530b,561s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<C:/Program Files/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Progra
+m Files/MiKTeX/fonts/type1/public/amsfonts/cm/cmbxti10.pfb><C:/Program Files/Mi
+KTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Program Files/MiKTeX/fonts/ty
+pe1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files/MiKTeX/fonts/type1/public/a
+msfonts/cm/cmti12.pfb>
+Output written on report.pdf (14 pages, 584896 bytes).
+PDF statistics:
+ 78 PDF objects out of 1000 (max. 8388607)
+ 0 named destinations out of 1000 (max. 500000)
+ 11 words of extra memory for PDF output out of 10000 (max. 10000000)
+
