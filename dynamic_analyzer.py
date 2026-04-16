@@ -176,10 +176,21 @@ def analyze_live_packet(raw_pkt, config):
         norm = normalize_packet(pkt)
         if not norm: return
         
-        # --- [NEW] HARDCODED VM WHITELIST TO STOP LOOPS ---
-        ignore_ips = ["127.0.0.1", "192.168.1.1", "192.168.1.100", "10.0.2.100"]
+        # --- [NEW] DYNAMIC VM WHITELIST TO STOP LOOPS ---
+        ignore_ips = ["127.0.0.1", "192.168.1.1", "10.0.2.100", "192.168.1.100", "192.168.1.104"]
+        
+        # Dynamically fetch local IP to guarantee we don't sniff our own Agent Core webhooks
+        import socket
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.connect(("8.8.8.8", 80))
+            ignore_ips.append(s.getsockname()[0])
+            s.close()
+        except: pass
+        
         if norm.get("ip_src") in ignore_ips or norm.get("ip_src") in config.get("WHITELIST_IPS", []):
             return
+        # --------------------------------------------------
         # --------------------------------------------------
  
         # --- [NEW] ML PRE-FILTER TRIAGE ---
