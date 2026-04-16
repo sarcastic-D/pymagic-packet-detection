@@ -217,8 +217,21 @@ def analyze_live_packet(raw_pkt, config):
                 elif malicious_ip:
                     print(f"[LRU Cache] Skipping duplicate webhook for {malicious_ip}")
 
+        # 4. Zero-Day Anomaly Detection
         if not packet_matched:
-            save_to_benign(raw_pkt, benign_path)
+            if is_suspicious or entropy_val > entropy_threshold:
+                print("\n[!!!] ZERO-DAY ANOMALY DETECTED via ML/Entropy Engine [!!!]")
+                logger.log(norm, "ZERO-DAY-ANOMALY", {"description": "No known signature, caught by ML/Entropy"}, 100, ["high_entropy", "ml_suspicious"])
+                save_to_quarantine(raw_pkt, quarantine_path)
+                
+                malicious_ip = norm.get("ip_src")
+                if malicious_ip and live_rate_limiter.should_send(malicious_ip):
+                    send_block_request(malicious_ip)
+                    threading.Thread(target=revalidate_blocked_ip, args=(malicious_ip,), daemon=True).start()
+                elif malicious_ip:
+                    print(f"[LRU Cache] Skipping duplicate webhook for {malicious_ip}")
+            else:
+                save_to_benign(raw_pkt, benign_path)
 
     except Exception as e:
         print(f"[!] Live Analysis Error: {e}")
