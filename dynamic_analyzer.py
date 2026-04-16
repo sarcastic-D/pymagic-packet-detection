@@ -199,8 +199,13 @@ def analyze_live_packet(raw_pkt, config):
         entropy_threshold = config.get("ENTROPY_THRESHOLD", 7.5)
         
         # Zero-Trust: If the ML thinks it's safe but the payload is highly encrypted, 
-        # we still force it through Deep Inspection to catch obfuscated Zero-Days!
-        if not is_suspicious and entropy_val <= entropy_threshold:
+        # we still force it through Deep Inspection ONLY IF it is inbound traffic!
+        # This prevents normal outbound HTTPS browsing from being falsely flagged as Zero-Days.
+        dst_ip = norm.get("ip_dst", "")
+        # Assuming pfSense/LAN is 10.x.x.x or 192.168.x.x
+        is_inbound = dst_ip.startswith("10.") or dst_ip.startswith("192.168.")
+        
+        if not is_suspicious and (entropy_val <= entropy_threshold or not is_inbound):
             save_to_benign(raw_pkt, benign_path)
             return  
         # ----------------------------------
@@ -230,9 +235,10 @@ def analyze_live_packet(raw_pkt, config):
 
         # 4. Zero-Day Anomaly Detection
         if not packet_matched:
-            if is_suspicious or entropy_val > entropy_threshold:
+            # We ONLY alert on high entropy if it's inbound traffic, OR if the ML natively flagged it.
+            if is_suspicious or (entropy_val > entropy_threshold and is_inbound):
                 print("\n[!!!] ZERO-DAY ANOMALY DETECTED via ML/Entropy Engine [!!!]")
-                logger.log(norm, "ZERO-DAY-ANOMALY", {"description": "No known signature, caught by ML/Entropy"}, 100, ["high_entropy", "ml_suspicious"])
+                logger.log(norm, "ZERO-DAY-ANOMALY", {"description": "No known signature, caught by ML/Entropy"}, 100, ["high_entropy"])
                 save_to_quarantine(raw_pkt, quarantine_path)
                 
                 malicious_ip = norm.get("ip_src")
