@@ -184,9 +184,14 @@ def analyze_live_packet(raw_pkt, config):
  
         # --- [NEW] ML PRE-FILTER TRIAGE ---
         is_suspicious = ml_predict(norm)
-        if not is_suspicious:
+        entropy_val = norm.get("entropy", 0.0)
+        entropy_threshold = config.get("ENTROPY_THRESHOLD", 7.5)
+        
+        # Zero-Trust: If the ML thinks it's safe but the payload is highly encrypted, 
+        # we still force it through Deep Inspection to catch obfuscated Zero-Days!
+        if not is_suspicious and entropy_val <= entropy_threshold:
             save_to_benign(raw_pkt, benign_path)
-            return  # 90% of traffic is discarded right here in 0.1ms
+            return  
         # ----------------------------------
         
         packet_matched = False
@@ -309,11 +314,9 @@ def run_analysis(pcap_path, mode='live'):
         
         # 4. Zero-Day Anomaly Detection
         if not packet_matched:
-            # If the ML flagged it and Entropy is high, but no signature matched -> Zero-Day!
-            entropy_threshold = config.get("ENTROPY_THRESHOLD", 7.5)
-            entropy_val = norm.get("entropy", 0.0)
-            
-            if is_suspicious and entropy_val > entropy_threshold:
+            # If the ML flagged it OR Entropy is high, but no signature matched -> Zero-Day!
+            # (We bypassed ML for high entropy earlier to enforce Zero-Trust)
+            if is_suspicious or entropy_val > entropy_threshold:
                 packet_matched = True
                 detected_alerts.append({
                     "packet_index": i,
