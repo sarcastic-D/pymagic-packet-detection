@@ -242,16 +242,8 @@ def match_rule(norm_pkt, rule):
         reasons.append("tcp_opt_match")
         critical_match = True 
     
-    # --- [NEW] Shannon Entropy Detection ---
-    # If the payload has high entropy (> threshold), it indicates 
-    # encrypted/obfuscated content designed to evade signature-based detection.
-    entropy_threshold = CONFIG.get("ENTROPY_THRESHOLD", 7.5)
-    entropy_val = norm_pkt.get("entropy", 0.0)
-    if entropy_val > entropy_threshold:
-        entropy_boost = WEIGHTS.get("entropy", 35)
-        score += entropy_boost
-        reasons.append(f"high_entropy({entropy_val})")
-        critical_match = True
+    # Note: Shannon Entropy Detection is now purely handled as a Zero-Day Anomaly
+    # fallback in dynamic_analyzer.py rather than granting arbitrary points to signatures.
 
     if critical_match:
         score += 50 
