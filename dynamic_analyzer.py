@@ -202,10 +202,15 @@ def analyze_live_packet(raw_pkt, config):
         # we still force it through Deep Inspection ONLY IF it is inbound traffic!
         # This prevents normal outbound HTTPS browsing from being falsely flagged as Zero-Days.
         dst_ip = norm.get("ip_dst", "")
+        sport = norm.get("sport", 0)
         # Assuming pfSense/LAN is 10.x.x.x or 192.168.x.x
         is_inbound = dst_ip.startswith("10.") or dst_ip.startswith("192.168.")
         
-        if not is_suspicious and (entropy_val <= entropy_threshold or not is_inbound):
+        # If it's inbound, we further verify it's NOT just returned web traffic (e.g. from GitHub on port 443)
+        # Hackers rarely use port 443 as their SOURCE port when attacking, they use random high ports.
+        is_return_web_traffic = is_inbound and sport in [443, 80, 22]
+        
+        if not is_suspicious and (entropy_val <= entropy_threshold or not is_inbound or is_return_web_traffic):
             save_to_benign(raw_pkt, benign_path)
             return  
         # ----------------------------------
@@ -235,8 +240,8 @@ def analyze_live_packet(raw_pkt, config):
 
         # 4. Zero-Day Anomaly Detection
         if not packet_matched:
-            # We ONLY alert on high entropy if it's inbound traffic, OR if the ML natively flagged it.
-            if is_suspicious or (entropy_val > entropy_threshold and is_inbound):
+            # We ONLY alert on high entropy if it's inbound traffic AND not standard return web traffic.
+            if is_suspicious or (entropy_val > entropy_threshold and is_inbound and not is_return_web_traffic):
                 print("\n[!!!] ZERO-DAY ANOMALY DETECTED via ML/Entropy Engine [!!!]")
                 logger.log(norm, "ZERO-DAY-ANOMALY", {"description": "No known signature, caught by ML/Entropy"}, 100, ["high_entropy"])
                 save_to_quarantine(raw_pkt, quarantine_path)
