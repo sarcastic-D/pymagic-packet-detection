@@ -307,9 +307,34 @@ def run_analysis(pcap_path, mode='live'):
                     elif malicious_ip:
                         print(f"[LRU Cache] Skipping duplicate webhook for {malicious_ip}")
         
-        # 4. Save benign traffic for baseline updating (live mode only)
-        if not packet_matched and mode == 'live':
-            save_to_benign(raw_pkt, benign_path)
+        # 4. Zero-Day Anomaly Detection
+        if not packet_matched:
+            # If the ML flagged it and Entropy is high, but no signature matched -> Zero-Day!
+            entropy_threshold = config.get("ENTROPY_THRESHOLD", 7.5)
+            entropy_val = norm.get("entropy", 0.0)
+            
+            if is_suspicious and entropy_val > entropy_threshold:
+                packet_matched = True
+                detected_alerts.append({
+                    "packet_index": i,
+                    "rule": "ZERO-DAY-ANOMALY",
+                    "score": 100,
+                    "entropy": entropy_val
+                })
+                if mode == 'live':
+                    print("\n[!!!] ZERO-DAY ANOMALY DETECTED via ML/Entropy Engine [!!!]")
+                    logger.log(norm, "ZERO-DAY-ANOMALY", {"description": "No known signature, caught by ML/Entropy"}, 100, ["high_entropy", "ml_suspicious"])
+                    save_to_quarantine(raw_pkt, quarantine_path)
+                    
+                    malicious_ip = norm.get("ip_src")
+                    if malicious_ip and rate_limiter.should_send(malicious_ip):
+                        async_send_block_request(malicious_ip)
+                    elif malicious_ip:
+                        print(f"[LRU Cache] Skipping duplicate webhook for {malicious_ip}")
+            else:
+                # 5. Truly Benign
+                if mode == 'live':
+                    save_to_benign(raw_pkt, benign_path)
 
     if mode == 'live':
         print(f"[*] Analysis Complete. {len(detected_alerts)} Alerts Logged.")

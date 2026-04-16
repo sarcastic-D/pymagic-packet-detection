@@ -231,11 +231,11 @@ def match_rule(norm_pkt, rule):
             score += WEIGHTS.get("payload_starts_with", 25)
             critical_match = True
 
-    if "ip_offset" in match:
-        # Simplistic structural feature mapping
-        score += WEIGHTS.get("ip_offset", 20)
-        reasons.append(f"ip_offset_detected")
-        critical_match = True
+    if "ip_offset" in match and norm_pkt.get("ip_offset") is not None:
+        if norm_pkt.get("ip_offset") == match["ip_offset"]:
+            score += WEIGHTS.get("ip_offset", 20)
+            reasons.append(f"ip_offset_detected")
+            critical_match = True
 
     if match_tcp_options(match, norm_pkt):
         score += WEIGHTS.get("tcp_option_value", 20)
