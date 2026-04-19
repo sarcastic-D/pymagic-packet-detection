@@ -177,21 +177,26 @@ def analyze_live_packet(raw_pkt, config):
         if not norm: return
         
         # --- DYNAMIC VM WHITELIST TO STOP LOOPS ---
-        # Only ignore our own machine's IPs to prevent webhook self-sniffing.
-        # 192.168.1.1 (pfSense LAN) must NOT be in this list:
-        # pfSense NAT rewrites Kali's source IP to 192.168.1.1 when forwarding to Ubuntu.
-        ignore_ips = ["127.0.0.1"]
-        
-        # Dynamically fetch local IP to guarantee we don't sniff our own Agent Core webhooks
-        import socket
+        # Get ALL local IPs (primary + secondary DHCP) to prevent self-sniffing loops.
+        import socket, subprocess
+        ignore_ips = {"127.0.0.1"}
         try:
-            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            s.connect(("8.8.8.8", 80))
-            ignore_ips.append(s.getsockname()[0])
-            s.close()
-        except: pass
+            # 'hostname -I' returns ALL IPs bound on any interface (space-separated)
+            all_local_ips = subprocess.check_output(['hostname', '-I'], timeout=1).decode().split()
+            ignore_ips.update(all_local_ips)
+        except Exception:
+            # Fallback: single socket method
+            try:
+                s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                s.connect(("8.8.8.8", 80))
+                ignore_ips.add(s.getsockname()[0])
+                s.close()
+            except Exception:
+                pass
         
-        if norm.get("ip_src") in ignore_ips or norm.get("ip_src") in config.get("WHITELIST_IPS", []):
+        ignore_ips.update(config.get("WHITELIST_IPS", []))
+        
+        if norm.get("ip_src") in ignore_ips:
             return
         # --------------------------------------------------
  
@@ -244,8 +249,36 @@ def analyze_live_packet(raw_pkt, config):
         if not packet_matched:
             # We ONLY alert on high entropy if it's inbound traffic AND not standard return web traffic.
             if is_suspicious or (entropy_val > entropy_threshold and is_inbound and not is_return_web_traffic):
-                print("\n[!!!] ZERO-DAY ANOMALY DETECTED via ML/Entropy Engine [!!!]")
-                logger.log(norm, "ZERO-DAY-ANOMALY", {"description": "No known signature, caught by ML/Entropy"}, 100, ["high_entropy"])
+                payload_len = len(norm.get("payload", b""))
+                dport = norm.get("dport", "?")
+                ml_verdict = "ML: SUSPICIOUS" if is_suspicious else "ML: Clean (overridden by entropy)"
+                
+                # Build rich detection reasons for the alert log
+                detection_reasons = []
+                if entropy_val > entropy_threshold:
+                    detection_reasons.append(f"high_entropy({entropy_val:.2f})")
+                if is_suspicious:
+                    detection_reasons.append("ml_flagged")
+                if payload_len > 0:
+                    detection_reasons.append(f"encrypted_payload({payload_len}B)")
+                
+                print(f"\n{'='*60}")
+                print(f"[!!!] ZERO-DAY ANOMALY DETECTED via ML/Entropy Engine [!!!]")
+                print(f"  >> Source IP  : {norm.get('ip_src', '?')}")
+                print(f"  >> Target Port: {dport}")
+                print(f"  >> Payload    : {payload_len} bytes (obfuscated/encrypted)")
+                print(f"  >> Entropy    : {entropy_val:.4f} bits (threshold: {entropy_threshold})")
+                print(f"  >> ML Verdict : {ml_verdict}")
+                print(f"  >> Reason     : No known signature matched. High-entropy payload indicates")
+                print(f"                  unknown malware, encrypted C2 channel, or zero-day exploit.")
+                print(f"{'='*60}")
+                
+                logger.log(norm, "ZERO-DAY-ANOMALY", {
+                    "description": "Unknown threat: No signature matched. High-entropy encrypted payload detected.",
+                    "entropy": entropy_val,
+                    "payload_size": payload_len,
+                    "target_port": dport
+                }, 100, detection_reasons)
                 save_to_quarantine(raw_pkt, quarantine_path)
                 
                 malicious_ip = norm.get("ip_src")
