@@ -8,11 +8,13 @@ PCAP_MALWARE_FILE: "synthetic_malware_v2.pcap"
 PCAP_CLEAN_FILE: "clean_traffic.pcap"  
 INFERRED_RULES_FILE: "inferred_conditions_v2.json"
 # --- Whitelist ---
+# NOTE: 192.168.1.1 (pfSense LAN) is intentionally NOT whitelisted.
+# pfSense rewrites the source IP to 192.168.1.1 via NAT when forwarding
+# packets from Kali to Ubuntu. If we whitelist it, all attack traffic is silently dropped.
+# Loop prevention is handled dynamically via socket detection in dynamic_analyzer.py.
 WHITELIST_IPS: 
   - "127.0.0.1"
-  - "192.168.1.1"
-  - "192.168.1.100"
-  - "10.0.2.100" # fallback if network changed
+  - "192.168.1.100"  # Ubuntu itself
 
 # --- Plugin Architecture ---
 FIREWALL_TYPE: "pfsense"  # Options: "mock", "pfsense", "linux"

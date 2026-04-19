@@ -176,8 +176,11 @@ def analyze_live_packet(raw_pkt, config):
         norm = normalize_packet(pkt)
         if not norm: return
         
-        # --- [NEW] DYNAMIC VM WHITELIST TO STOP LOOPS ---
-        ignore_ips = ["127.0.0.1", "192.168.1.1", "10.0.2.100", "192.168.1.100", "192.168.1.104"]
+        # --- DYNAMIC VM WHITELIST TO STOP LOOPS ---
+        # Only ignore our own machine's IPs to prevent webhook self-sniffing.
+        # 192.168.1.1 (pfSense LAN) must NOT be in this list:
+        # pfSense NAT rewrites Kali's source IP to 192.168.1.1 when forwarding to Ubuntu.
+        ignore_ips = ["127.0.0.1"]
         
         # Dynamically fetch local IP to guarantee we don't sniff our own Agent Core webhooks
         import socket
@@ -190,7 +193,6 @@ def analyze_live_packet(raw_pkt, config):
         
         if norm.get("ip_src") in ignore_ips or norm.get("ip_src") in config.get("WHITELIST_IPS", []):
             return
-        # --------------------------------------------------
         # --------------------------------------------------
  
         # --- [NEW] ML PRE-FILTER TRIAGE ---
