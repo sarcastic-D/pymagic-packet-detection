@@ -21,6 +21,7 @@ INFERRED_RULES_FILE: "inferred_conditions_v2.json"
 WHITELIST_IPS: 
   - "127.0.0.1"
   - "192.168.1.100"  # Ubuntu itself
+  - "10.0.2.1"       # VirtualBox NAT Gateway (generates false positives from housekeeping traffic)
 
 # --- Plugin Architecture ---
 FIREWALL_TYPE: "pfsense"  # Options: "mock", "pfsense", "linux"
