@@ -143,6 +143,12 @@ def make_packet_handler(rules, ignore_ips, logger, config, rate_limiter,
     resources pre-bound. This eliminates all per-packet I/O and subprocess calls.
     """
     entropy_threshold = config.get("ENTROPY_THRESHOLD", 6.5)
+    alert_ttl = config.get("LRU_CACHE_TTL", 5)  # seconds
+
+    # Per-(source_ip, rule_id) deduplication cache.
+    # Prevents the same rule firing for the same IP from printing/logging
+    # multiple times within the TTL window (e.g. 3 identical Jynx packets).
+    alert_dedup: dict = {}  # key=(ip, rule_id) → last_alert_timestamp
 
     def analyze_live_packet(raw_pkt):
         try:
@@ -188,19 +194,30 @@ def make_packet_handler(rules, ignore_ips, logger, config, rate_limiter,
                 if matched:
                     packet_matched = True
                     rule_id = rule.get("rule_id", "UNKNOWN")
-                    threat_name = rule.get("meta", {}).get("name", rule_id)
+                    threat_name = rule.get("meta", {}).get("name",
+                                          rule.get("meta", {}).get("source_rootkit", rule_id))
+                    malicious_ip = norm.get("ip_src")
 
-                    print(f"\n{'='*60}")
-                    print(f"[!!!] SIGNATURE MATCH: {threat_name}")
-                    print(f"  >> Source IP  : {norm.get('ip_src', '?')}")
-                    print(f"  >> Score      : {score} / 100  |  Rule: {rule_id}")
-                    print(f"  >> Reasons    : {reasons}")
-                    print(f"{'='*60}")
+                    # --- Alert Deduplication ---
+                    # Only print + log if this (ip, rule_id) pair hasn't fired recently.
+                    dedup_key = (malicious_ip, rule_id)
+                    now = time.time()
+                    last_alerted = alert_dedup.get(dedup_key, 0)
+                    is_new_alert = (now - last_alerted) > alert_ttl
+                    if is_new_alert:
+                        alert_dedup[dedup_key] = now
+                        print(f"\n{'='*60}")
+                        print(f"[!!!] SIGNATURE MATCH: {threat_name}")
+                        print(f"  >> Source IP  : {malicious_ip}")
+                        print(f"  >> Score      : {score} / 100  |  Rule: {rule_id}")
+                        print(f"  >> Reasons    : {reasons}")
+                        print(f"{'='*60}")
+                        logger.log(norm, rule_id, rule.get("meta", {}), score, reasons)
+                    elif verbose:
+                        print(f"[Dedup] Suppressing repeat alert for {rule_id} from {malicious_ip}")
 
-                    logger.log(norm, rule_id, rule.get("meta", {}), score, reasons)
                     save_to_quarantine(raw_pkt, quarantine_path)
 
-                    malicious_ip = norm.get("ip_src")
                     if malicious_ip and rate_limiter.should_send(malicious_ip):
                         send_block_request(malicious_ip)
                         threading.Thread(
@@ -213,8 +230,19 @@ def make_packet_handler(rules, ignore_ips, logger, config, rate_limiter,
 
             # --- Zero-Day Anomaly Engine ---
             if not packet_matched:
-                if is_suspicious or (entropy_val > entropy_threshold and is_inbound and not is_return_web_traffic):
-                    payload_len = len(norm.get("payload", b""))
+                payload_len = len(norm.get("payload", b""))
+
+                # Guard: ML-only flags on tiny payloads (< 32 bytes) are
+                # not reliable. Tiny TCP control packets look suspicious to
+                # the ML model but have zero entropy and no payload — they
+                # are normal TCP handshake/ACK frames, not zero-days.
+                # Only escalate to Zero-Day if:
+                #   - Entropy is genuinely high (encrypted large payload), OR
+                #   - ML flags it AND payload is large enough to be meaningful
+                meaningful_ml_flag = is_suspicious and payload_len >= 32
+                high_entropy_flag = entropy_val > entropy_threshold and is_inbound and not is_return_web_traffic
+
+                if meaningful_ml_flag or high_entropy_flag:
                     dport = norm.get("dport", "?")
                     ml_verdict = "ML: SUSPICIOUS" if is_suspicious else "ML: Clean (overridden by entropy)"
 
@@ -226,25 +254,34 @@ def make_packet_handler(rules, ignore_ips, logger, config, rate_limiter,
                     if payload_len > 0:
                         detection_reasons.append(f"encrypted_payload({payload_len}B)")
 
-                    print(f"\n{'='*60}")
-                    print(f"[!!!] ZERO-DAY ANOMALY DETECTED via ML/Entropy Engine [!!!]")
-                    print(f"  >> Source IP  : {norm.get('ip_src', '?')}")
-                    print(f"  >> Target Port: {dport}")
-                    print(f"  >> Payload    : {payload_len} bytes (obfuscated/encrypted)")
-                    print(f"  >> Entropy    : {entropy_val:.4f} bits (threshold: {entropy_threshold})")
-                    print(f"  >> ML Verdict : {ml_verdict}")
-                    print(f"  >> Reason     : No known signature matched. High-entropy payload indicates")
-                    print(f"                  unknown malware, encrypted C2 channel, or zero-day exploit.")
-                    print(f"{'='*60}")
+                    # --- Zero-Day Alert Deduplication ---
+                    dedup_key = (norm.get("ip_src"), "ZERO-DAY-ANOMALY")
+                    now = time.time()
+                    last_alerted = alert_dedup.get(dedup_key, 0)
+                    is_new_alert = (now - last_alerted) > alert_ttl
 
-                    logger.log(norm, "ZERO-DAY-ANOMALY", {
-                        "description": "Unknown threat: No signature matched. High-entropy encrypted payload detected.",
-                        "entropy": entropy_val,
-                        "payload_size": payload_len,
-                        "target_port": dport
-                    }, 100, detection_reasons)
+                    if is_new_alert:
+                        alert_dedup[dedup_key] = now
+                        print(f"\n{'='*60}")
+                        print(f"[!!!] ZERO-DAY ANOMALY DETECTED via ML/Entropy Engine [!!!]")
+                        print(f"  >> Source IP  : {norm.get('ip_src', '?')}")
+                        print(f"  >> Target Port: {dport}")
+                        print(f"  >> Payload    : {payload_len} bytes (obfuscated/encrypted)")
+                        print(f"  >> Entropy    : {entropy_val:.4f} bits (threshold: {entropy_threshold})")
+                        print(f"  >> ML Verdict : {ml_verdict}")
+                        print(f"  >> Reason     : No known signature matched. High-entropy payload indicates")
+                        print(f"                  unknown malware, encrypted C2 channel, or zero-day exploit.")
+                        print(f"{'='*60}")
+                        logger.log(norm, "ZERO-DAY-ANOMALY", {
+                            "description": "Unknown threat detected via ML/Entropy.",
+                            "entropy": entropy_val,
+                            "payload_size": payload_len,
+                            "target_port": dport
+                        }, 100, detection_reasons)
+                    elif verbose:
+                        print(f"[Dedup] Suppressing repeat Zero-Day alert from {norm.get('ip_src')}")
+
                     save_to_quarantine(raw_pkt, quarantine_path)
-
                     malicious_ip = norm.get("ip_src")
                     if malicious_ip and rate_limiter.should_send(malicious_ip):
                         send_block_request(malicious_ip)
