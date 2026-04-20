@@ -274,6 +274,39 @@ def make_packet_handler(rules, ignore_ips, logger, config, rate_limiter,
 
                     if is_new_alert:
                         alert_dedup[dedup_key] = now
+
+                        # --- Build a dynamic, specific reason string ---
+                        # Explains exactly WHY this packet was flagged,
+                        # not just a generic "high entropy" message.
+                        reason_parts = []
+                        if entropy_val > entropy_threshold:
+                            reason_parts.append(
+                                f"Shannon Entropy ({entropy_val:.2f} bits) exceeds threshold ({entropy_threshold}) "
+                                f"— payload is mathematically too random to be plaintext. "
+                                f"Indicates XOR/AES/custom encryption (C2 beacon or exfiltration channel)."
+                            )
+                        if norm.get("has_magic_pattern", 0):
+                            reason_parts.append(
+                                f"Payload does not start with TLS (0x16) or HTTP bytes "
+                                f"— custom protocol / magic-byte trigger detected on port {dport}."
+                            )
+                        if norm.get("is_inbound_to_server", 0):
+                            reason_parts.append(
+                                f"Unsolicited inbound connection: "
+                                f"ephemeral source port {norm.get('sport','?')} → well-known dest port {dport} "
+                                f"— matches rootkit C2 beacon / backdoor trigger pattern."
+                            )
+                        if is_suspicious and not norm.get("has_magic_pattern", 0) and not norm.get("is_inbound_to_server", 0):
+                            reason_parts.append(
+                                f"ML Decision Tree flagged packet as behaviorally anomalous "
+                                f"(window={norm.get('window_size','?')}, proto={norm.get('protocol','?')}, "
+                                f"payload={payload_len}B) — does not match any known-benign traffic profile."
+                            )
+                        if not reason_parts:
+                            reason_parts.append("No known signature matched. Combined ML+Entropy analysis flagged as threat.")
+
+                        dynamic_reason = " | ".join(reason_parts)
+
                         print(f"\n{'='*60}")
                         print(f"[!!!] ZERO-DAY ANOMALY DETECTED via ML/Entropy Engine [!!!]")
                         print(f"  >> Source IP  : {norm.get('ip_src', '?')}")
@@ -281,11 +314,10 @@ def make_packet_handler(rules, ignore_ips, logger, config, rate_limiter,
                         print(f"  >> Payload    : {payload_len} bytes (obfuscated/encrypted)")
                         print(f"  >> Entropy    : {entropy_val:.4f} bits (threshold: {entropy_threshold})")
                         print(f"  >> ML Verdict : {ml_verdict}")
-                        print(f"  >> Reason     : No known signature matched. High-entropy payload indicates")
-                        print(f"                  unknown malware, encrypted C2 channel, or zero-day exploit.")
+                        print(f"  >> Reason     : {dynamic_reason}")
                         print(f"{'='*60}")
                         logger.log(norm, "ZERO-DAY-ANOMALY", {
-                            "description": "Unknown threat detected via ML/Entropy.",
+                            "description": dynamic_reason,
                             "entropy": entropy_val,
                             "payload_size": payload_len,
                             "target_port": dport

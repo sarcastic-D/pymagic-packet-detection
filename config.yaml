@@ -14,14 +14,19 @@ PCAP_MALWARE_FILE: "synthetic_malware_v2.pcap"
 PCAP_CLEAN_FILE: "clean_traffic.pcap"  
 INFERRED_RULES_FILE: "inferred_conditions_v2.json"
 # --- Whitelist ---
-# NOTE: 192.168.1.1 (pfSense LAN) is intentionally NOT whitelisted.
-# pfSense rewrites the source IP to 192.168.1.1 via NAT when forwarding
-# packets from Kali to Ubuntu. If we whitelist it, all attack traffic is silently dropped.
-# Loop prevention is handled dynamically via socket detection in dynamic_analyzer.py.
+# WHITELIST_IPS: IPs that should NEVER trigger alerts.
+# IMPORTANT: 192.168.1.1 (pfSense LAN) is whitelisted because pfSense sends its own
+# background traffic (DHCP, ARP, health checks) that triggers false positives.
+# This is SAFE only because Pure NAT mode is enabled in pfSense (System > Advanced >
+# Firewall & NAT > NAT Reflection = Pure NAT). In Pure NAT mode, attack traffic from
+# Kali shows its REAL source IP (e.g. 10.0.2.199), NOT 192.168.1.1.
+# If you ever switch back to Masquerade NAT, remove 192.168.1.1 from this list!
 WHITELIST_IPS: 
   - "127.0.0.1"
   - "192.168.1.100"  # Ubuntu itself
-  - "10.0.2.1"       # VirtualBox NAT Gateway (generates false positives from housekeeping traffic)
+  - "192.168.1.104"  # Ubuntu secondary IP
+  - "10.0.2.1"       # VirtualBox NAT Gateway
+  - "192.168.1.1"    # pfSense LAN interface (safe to whitelist with Pure NAT enabled)
 
 # --- Plugin Architecture ---
 FIREWALL_TYPE: "pfsense"  # Options: "mock", "pfsense", "linux"
