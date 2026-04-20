@@ -1,4 +1,8 @@
-import requests
+try:
+    import requests
+    HAS_REQUESTS = True
+except ImportError:
+    HAS_REQUESTS = False
 import time
 from collections import OrderedDict
 from common_utilities import load_config
@@ -16,7 +20,10 @@ def check_ip_reputation(ip_address):
     """
     if ip_address in _cache:
         return _cache[ip_address]
-        
+
+    if not HAS_REQUESTS:
+        return {"pulse_count": 0, "error": "requests library not installed"}
+
     if not OTX_API_KEY or OTX_API_KEY == "YOUR_FREE_API_KEY_HERE":
         # Fallback if no key is configured
         return {"pulse_count": 0, "error": "No API Key"}

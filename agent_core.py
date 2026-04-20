@@ -10,14 +10,12 @@ app = Flask(__name__)
 
 # --- CONFIGURATION ---
 CONFIG = load_config()
-SHARED_SECRET = b"SentinelForge_SuperSecretKey_2026"
+SHARED_SECRET = CONFIG.get("SHARED_SECRET", "SentinelForge_SuperSecretKey_2026").encode()
 
-# IP Whitelist (The "Foot-gun" prevention mechanism)
+# IP Whitelist — only localhost. All other protections are handled dynamically
+# in dynamic_analyzer.py via hostname -I to prevent false positives.
 IP_WHITELIST = {
-    "127.0.0.1",       # Localhost
-    "10.0.0.1",        # Sentinel Forge Server VPN IP
-    "192.168.1.1",     # Example Default Gateway
-    "8.8.8.8"          # Example Critical DNS Server
+    "127.0.0.1",  # Localhost (the agent itself)
 }
 
 # --- DATABASE SETUP (Idempotency Cache) ---

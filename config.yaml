@@ -1,7 +1,13 @@
 # --- Paths ---
-INPUT_FILE: "conditions.json" 
+INPUT_FILE: "conditions.json"
 OUTPUT_DIR: "output_v2"
 COMBINED_RULES_FILE: "combined_rules_v2.json"
+
+# --- HMAC Security (Must match between agent_core.py and webhook_sender.py) ---
+SHARED_SECRET: "SentinelForge_SuperSecretKey_2026"
+
+# --- Agent Core Webhook URL ---
+AGENT_URL: "http://127.0.0.1:5000/api/v1/alert"
 
 # Research/Loop Files
 PCAP_MALWARE_FILE: "synthetic_malware_v2.pcap"
@@ -31,7 +37,7 @@ LRU_CACHE_TTL: 5            # Seconds before allowing a re-ban for the same IP
 LRU_CACHE_MAX_SIZE: 1024     # Max unique IPs to track
 
 # --- Shannon Entropy ---
-ENTROPY_THRESHOLD: 7.5       # Payload entropy above this triggers a score boost
+ENTROPY_THRESHOLD: 6.5       # Payload entropy above this triggers anomaly detection (min ~90 bytes of random data)
 ENTROPY_SCORE_BOOST: 35      # Points added to threat score for high entropy
 ENTROPY_MIN_PAYLOAD_SIZE: 32 # Only calculate entropy on payloads >= this many bytes
 
@@ -40,8 +46,8 @@ QUARANTINE_BUFFER: "quarantine_buffer.pcap"
 BENIGN_BUFFER: "benign_buffer.pcap"
 
 # --- Live Sniffing ---
-# SNIFF_INTERFACE: "eth0"
-# SNIFF_FILTER: "ip"
+SNIFF_INTERFACE: "enp0s3"
+SNIFF_FILTER: "ip"
 
 # --- Risk Scoring Model ---
 # Academic Justification: 'Feature Specificity'

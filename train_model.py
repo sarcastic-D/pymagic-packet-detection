@@ -67,7 +67,12 @@ def train():
     # 3. Train the Decision Tree Model
     # Max Depth = 5 prevents overfitting and ensures microsecond O(depth) latency
     print(f"[*] Training Explainable Decision Tree on {len(X)} samples...")
-    model = DecisionTreeClassifier(max_depth=5, random_state=42)
+    print(f"    Malware samples : {len(mal_features)}")
+    print(f"    Clean samples   : {len(clean_features)}")
+    print(f"    class_weight    : balanced (prevents bias toward majority class)")
+    # class_weight='balanced' makes the model penalize misclassifying the minority
+    # class (malware) proportionally more, fixing the "always predict clean" bias.
+    model = DecisionTreeClassifier(max_depth=5, random_state=42, class_weight='balanced')
     model.fit(X, y)
     
     # 4. Save the Model

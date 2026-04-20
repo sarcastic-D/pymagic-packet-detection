@@ -1,4 +1,10 @@
 from scapy.all import IP, defrag
+import time
+
+# Maximum seconds to keep an incomplete fragment stream in memory.
+# If a stream is not completed within this window it is evicted.
+_FRAGMENT_TTL_SECONDS = 30
+
 
 class FragmentReassembler:
     """
@@ -7,7 +13,7 @@ class FragmentReassembler:
     before passing them to the inspection engine.
     """
     def __init__(self):
-        # Buffer to store fragments: Key=(src, dst, id), Value=List of packets
+        # Buffer: Key=(src, dst, id) → {"pkts": [], "first_seen": float}
         self.buffer = {}
 
     def process(self, pkt):
@@ -29,31 +35,32 @@ class FragmentReassembler:
         if not is_fragment:
             return pkt
 
-        # Identification Key for this IP flow
         key = (ip.src, ip.dst, ip.id)
 
-        if key not in self.buffer:
-            self.buffer[key] = []
+        # TTL eviction: clean up stale fragment streams before adding new ones.
+        now = time.time()
+        stale_keys = [
+            k for k, v in self.buffer.items()
+            if now - v["first_seen"] > _FRAGMENT_TTL_SECONDS
+        ]
+        for k in stale_keys:
+            del self.buffer[k]
 
-        self.buffer[key].append(pkt)
+        if key not in self.buffer:
+            self.buffer[key] = {"pkts": [], "first_seen": now}
+
+        self.buffer[key]["pkts"].append(pkt)
 
         # Optimization: Only attempt defrag if we see the 'Last Fragment' (MF=0)
         # or if buffer is getting large.
         if ip.flags.MF == 0:
             try:
-                # Scapy's defrag returns ([reassembled], [remaining])
-                # We assume a clean stream for this PoC
-                reassembled_list = defrag(self.buffer[key])
-                
-                # Check if it returned a tuple of lists or a single list
+                reassembled_list = defrag(self.buffer[key]["pkts"])
                 lists_to_check = reassembled_list if isinstance(reassembled_list, tuple) else [reassembled_list]
                 for plist in lists_to_check:
                     for p in plist:
-                        # Find the first valid, fully reassembled IP packet
                         if IP in p and p[IP].frag == 0 and p[IP].flags.MF == 0:
-                            # Clean up buffer
                             del self.buffer[key]
-                            # Return the full, reassembled packet for inspection
                             return p
             except Exception as e:
                 print(f"[!] Defrag Error: {e}")

@@ -4,10 +4,12 @@ import hashlib
 import json
 import urllib.request
 import urllib.error
+from common_utilities import load_config
 
-# Must match the Universal Agent Core
-SHARED_SECRET = b"SentinelForge_SuperSecretKey_2026"
-AGENT_URL = "http://127.0.0.1:5000/api/v1/alert"
+_CONFIG = load_config()
+# Read from config so both sender and receiver always use the same key.
+SHARED_SECRET = _CONFIG.get("SHARED_SECRET", "SentinelForge_SuperSecretKey_2026").encode()
+AGENT_URL = _CONFIG.get("AGENT_URL", "http://127.0.0.1:5000/api/v1/alert")
 
 def send_block_request(target_ip: str):
     """
