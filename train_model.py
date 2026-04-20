@@ -27,14 +27,16 @@ def extract_features(pcap_path):
         norm = normalize_packet(pkt)
         if not norm: continue
         
-        # We transform the raw packet into exactly 5 mathematical features
+        # 7-feature vector — must EXACTLY match ml_predict() in dynamic_analyzer.py
         entropy = norm.get("entropy", 0.0)
         dport = norm.get("dport", 0)
         sport = norm.get("sport", 0)
         win_size = norm.get("window_size", 0)
         proto = 1 if norm.get("protocol") == "TCP" else 0
-        
-        features.append([entropy, dport, sport, win_size, proto])
+        has_magic = norm.get("has_magic_pattern", 0)       # NEW: non-TLS/non-HTTP payload start
+        is_inbound = norm.get("is_inbound_to_server", 0)   # NEW: external→internal on web ports
+
+        features.append([entropy, dport, sport, win_size, proto, has_magic, is_inbound])
         
     return features
 

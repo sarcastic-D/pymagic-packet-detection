@@ -116,5 +116,37 @@ def normalize_packet(pkt):
     else:
         norm["payload"] = b""
         norm["entropy"] = 0.0
-        
+
+    # --- [NEW] Magic Pattern Detection ---
+    # Checks if the raw payload starts with a non-TLS, non-HTTP byte pattern.
+    # Real TLS ClientHello starts with 0x16 0x03. Real HTTP starts with 'GET'/'POST'.
+    # Anything else on port 443 is likely a custom C2 protocol with magic bytes.
+    raw_payload = norm.get("payload", b"")
+    has_magic = False
+    if len(raw_payload) >= 4:
+        first_byte = raw_payload[0]
+        # TLS starts with 0x16 (22), HTTP starts with printable ASCII (G=71, P=80, H=72, D=68, O=79)
+        is_tls  = (first_byte == 0x16)
+        is_http = (first_byte in [71, 80, 72, 68, 79, 67])  # GET POST HEAD DELETE OPTIONS CONNECT
+        has_magic = not is_tls and not is_http
+    norm["has_magic_pattern"] = 1 if has_magic else 0
+
+    # --- [NEW] Unsolicited Inbound Connection Detection ---
+    # This discriminates malware C2 beacons from legitimate HTTPS responses
+    # WITHOUT relying on IP ranges (which fail in virtual lab environments
+    # where attacker Kali is also RFC1918 10.x.x.x).
+    #
+    # The key insight is PORT DIRECTION:
+    #   Malware beacon:   Kali(sport=12345 HIGH) --> Ubuntu(dport=443 WELL-KNOWN) → flag=1
+    #   HTTPS response:   Google(sport=443 WELL-KNOWN) --> Ubuntu(dport=54321 HIGH) → flag=0
+    #
+    # If dport is well-known (443/80/22) AND sport is high/ephemeral (>1024):
+    #   → someone is INITIATING an unsolicited connection TO our server port
+    #   → this is the exact pattern of malware C2, backdoor beacons, and rootkit triggers
+    #   → legitimate HTTPS responses have the OPPOSITE pattern (sport=443, dport=high)
+    sport_n  = norm.get("sport", 0)
+    dport_n  = norm.get("dport", 0)
+    WELL_KNOWN_PORTS = {80, 443, 22, 8443, 8080, 21, 23, 25, 53}
+    norm["is_inbound_to_server"] = 1 if (dport_n in WELL_KNOWN_PORTS and sport_n > 1024) else 0
+
     return norm

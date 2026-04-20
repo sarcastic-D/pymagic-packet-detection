@@ -60,8 +60,12 @@ if HAS_JOBLIB and os.path.exists("ml_prefilter.joblib"):
 
 def ml_predict(norm_pkt) -> bool:
     """
-    Evaluates packet header features against the trained Decision Tree.
-    Returns True if suspicious, False if safe.
+    Evaluates packet against the trained 7-feature Decision Tree.
+
+    Feature vector (must EXACTLY match train_model.py):
+      [entropy, dport, sport, window_size, proto, has_magic_pattern, is_inbound_to_server]
+
+    Returns True if suspicious (route to DPI), False if safe.
     Falls back to True (analyze everything) if no model is loaded.
     """
     if ML_MODEL is None:
@@ -71,7 +75,9 @@ def ml_predict(norm_pkt) -> bool:
         norm_pkt.get("dport", 0),
         norm_pkt.get("sport", 0),
         norm_pkt.get("window_size", 0),
-        1 if norm_pkt.get("protocol") == "TCP" else 0
+        1 if norm_pkt.get("protocol") == "TCP" else 0,
+        norm_pkt.get("has_magic_pattern", 0),       # NEW
+        norm_pkt.get("is_inbound_to_server", 0),    # NEW
     ]]
     return ML_MODEL.predict(features)[0] == 1
 
@@ -177,13 +183,19 @@ def make_packet_handler(rules, ignore_ips, logger, config, rate_limiter,
             # Legitimate return web traffic has src port 443/80/22 (server → client)
             is_return_web_traffic = is_inbound and sport in [443, 80, 22]
 
-            # --- ML Pre-Filter Triage ---
+            # --- Triage Gate (Your 3-Way Logic) ---
+            # ML=Clean  + Entropy LOW  → definitely benign, skip DPI entirely
+            # ML=Clean  + Entropy HIGH → entropy overrides ML, run DPI
+            # ML=Suspicious + any      → run DPI regardless of entropy
+            #
+            # Simplifies to: run_dpi = is_suspicious OR (entropy > threshold)
             is_suspicious = ml_predict(norm)
             entropy_val = norm.get("entropy", 0.0)
+            run_dpi = is_suspicious or (entropy_val > entropy_threshold and is_inbound and not is_return_web_traffic)
 
-            # Fast-path: bail early if ML says clean AND entropy is low AND it looks inbound
-            if (not is_suspicious
-                    and (entropy_val <= entropy_threshold or not is_inbound or is_return_web_traffic)):
+            if not run_dpi:
+                if verbose:
+                    print(f"[BENIGN] ML=Clean + Low-Entropy packet from {norm.get('ip_src')} → saved as benign")
                 save_to_benign(raw_pkt, benign_path)
                 return
 
