@@ -1,5 +1,5 @@
 """
-Sentinel Forge - Rule Matcher
+Occult Tracer - Rule Matcher
 ==============================
 Scores incoming normalized packets against known threat signatures.
 Returns (matched: bool, score: int, reasons: str) per packet.

@@ -1,5 +1,5 @@
 """
-Sentinel Forge - Inference Engine (The ML Brain)
+Occult Tracer - Inference Engine (The ML Brain)
 =================================================
 Statistical Machine Learning engine that analyzes quarantined
 malware samples against a clean traffic baseline to automatically

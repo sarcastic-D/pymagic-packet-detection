@@ -26,7 +26,7 @@ def main():
     normalized_rules = []
     errors = []
 
-    print(f"[*] Sentinel Forge v2: Reading {args.infile}...")
+    print(f"[*] Occult Tracer v2: Reading {args.infile}...")
 
     for rk_name, data in db.items():
         if not isinstance(data, dict) or "conditions" not in data:

@@ -55,7 +55,7 @@
 #     sport = match.get("sport", "any")
 #     sid = int(int(r["rule_id"].split("_")[1], 16) % 10000000) + 1000000
     
-#     options = [f'msg:"{r["meta"].get("description", "Sentinel Forge Rule")}"']
+#     options = [f'msg:"{r["meta"].get("description", "Occult Tracer Rule")}"']
     
 #     if "payload_magic" in match:
 #         v = match["payload_magic"]
@@ -149,7 +149,7 @@ def suricata_rule_from_normalized(r):
     sport = match.get("sport", "any")
     sid = int(int(r["rule_id"].split("_")[1], 16) % 10000000) + 1000000
     
-    options = [f'msg:"{r["meta"].get("description", "Sentinel Forge Rule")}"']
+    options = [f'msg:"{r["meta"].get("description", "Occult Tracer Rule")}"']
     
     # Content matching options
     if "payload_magic" in match:
@@ -179,7 +179,7 @@ def suricata_rule_from_normalized(r):
     
     # Entropy-based metadata (informational, Suricata doesn't natively support entropy matching)
     if match.get("high_entropy"):
-        options.append('metadata:sentinel_forge_entropy_anomaly')
+        options.append('metadata:occult_tracer_entropy_anomaly')
     
     options.append(f"sid:{sid}")
     options.append("rev:1")

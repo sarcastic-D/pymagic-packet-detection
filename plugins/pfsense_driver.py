@@ -1,5 +1,5 @@
 """
-Sentinel Forge - pfSense SSH Driver Plugin
+Occult Tracer - pfSense SSH Driver Plugin
 ==========================================
 Uses paramiko to SSH into a pfSense firewall and execute
 the 'easyrule' command to dynamically block malicious IPs.

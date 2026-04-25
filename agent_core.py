@@ -121,7 +121,7 @@ def enforce_block(target_ip: str) -> str:
 @app.route('/api/v1/alert', methods=['POST'])
 def receive_alert():
     """
-    Webhook receiver endpoint for Sentinel Forge.
+    Webhook receiver endpoint for Occult Tracer.
     Expected JSON: {"target_ip": "1.2.3.4", "action": "block", "timestamp": <unix>}
     Headers must include: X-Signature
     """
@@ -147,7 +147,7 @@ def receive_alert():
     # 3. Pass to Universal Enforcement Engine
     result = enforce_block(target_ip)
     
-    # 4. Respond to Sentinel Forge
+    # 4. Respond to Occult Tracer
     if result == "whitelisted":
         return jsonify({"status": "ignored", "reason": "IP is on safety whitelist"}), 200
     elif result == "already_blocked":
@@ -157,6 +157,17 @@ def receive_alert():
     else:
         return jsonify({"status": "success", "message": f"IP {target_ip} actively blocked"}), 200
 
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    """
+    Catch any unhandled internal Python exceptions and return them as JSON
+    so the Webhook Sender doesn't receive a generic Flask 500 HTML page.
+    """
+    import traceback
+    print(f"\n[CRITICAL ERROR] {str(e)}")
+    print(traceback.format_exc())
+    return jsonify({"status": "error", "message": f"Internal Agent Error: {str(e)}"}), 500
 
 if __name__ == '__main__':
     print("==========================================")

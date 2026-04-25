@@ -4,7 +4,7 @@
   SENTINEL FORGE - KALI LINUX ATTACK SIMULATOR
   
   Run this script FROM KALI LINUX to send crafted rootkit magic packets
-  to the Ubuntu VM running Sentinel Forge. Each packet is designed to
+  to the Ubuntu VM running Occult Tracer. Each packet is designed to
   match a specific rule in combined_rules_v2.json.
   
   Usage:

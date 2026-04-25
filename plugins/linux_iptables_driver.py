@@ -1,5 +1,5 @@
 """
-Sentinel Forge - Linux iptables Driver Plugin
+Occult Tracer - Linux iptables Driver Plugin
 ==============================================
 Uses subprocess to execute iptables commands on a local Linux host
 to dynamically block malicious IPs.

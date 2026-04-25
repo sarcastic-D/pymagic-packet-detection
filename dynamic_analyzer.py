@@ -1,5 +1,5 @@
 """
-Sentinel Forge - Dynamic Analyzer (The Detective)
+Occult Tracer - Dynamic Analyzer (The Detective)
 ==================================================
 Core DPI engine that analyzes live network traffic in real-time.
 
@@ -53,9 +53,10 @@ ML_MODEL = None
 if HAS_JOBLIB and os.path.exists("ml_prefilter.joblib"):
     try:
         ML_MODEL = joblib.load("ml_prefilter.joblib")
-        print("[+] ML Pre-Filter (Decision Tree) loaded successfully.")
+        print("[+] ML Pre-Filter (Random Forest Ensemble) loaded successfully.")
     except Exception as e:
         print(f"[-] Could not load ML model: {e}. All packets will proceed to full DPI.")
+
 
 
 def ml_predict(norm_pkt) -> bool:
@@ -152,14 +153,26 @@ def make_packet_handler(rules, ignore_ips, logger, config, rate_limiter,
     alert_ttl = config.get("LRU_CACHE_TTL", 5)  # seconds
 
     # Per-(source_ip, rule_id) deduplication cache.
-    # Prevents the same rule firing for the same IP from printing/logging
-    # multiple times within the TTL window (e.g. 3 identical Jynx packets).
+    # Bug 2 Fix: Capped at _DEDUP_MAX entries with TTL-based eviction to
+    # prevent unbounded growth during long-running (24h+) sessions.
+    _DEDUP_MAX = 512
     alert_dedup: dict = {}  # key=(ip, rule_id) → last_alert_timestamp
+
+    # Bug 1 Fix: Use the robust FragmentReassembler for live traffic.
+    # Previously the live callback used a weaker one-shot IP rebuild trick
+    # that cannot handle multi-packet fragment streams — it simply rebuilt
+    # a single fragmented packet in isolation rather than buffering all
+    # fragments until the 'last fragment' (MF=0) arrives.
+    reassembler = FragmentReassembler()
 
     def analyze_live_packet(raw_pkt):
         try:
-            # --- Fragment handling ---
-            pkt = raw_pkt
+            # --- Bug 1 Fix: Robust fragment reassembly ---
+            pkt = reassembler.process(raw_pkt)
+            if pkt is None:
+                return  # Still buffering — waiting for remaining fragments
+
+            # Fallback: simple rebuild for non-standard single-packet fragmentation
             if IP in pkt and not (TCP in pkt or UDP in pkt or ICMP in pkt):
                 try:
                     rebuilt = IP(bytes(pkt[IP]))
@@ -210,10 +223,14 @@ def make_packet_handler(rules, ignore_ips, logger, config, rate_limiter,
                                           rule.get("meta", {}).get("source_rootkit", rule_id))
                     malicious_ip = norm.get("ip_src")
 
-                    # --- Alert Deduplication ---
-                    # Only print + log if this (ip, rule_id) pair hasn't fired recently.
+                    # --- Alert Deduplication (Bug 2 Fix: bounded eviction) ---
                     dedup_key = (malicious_ip, rule_id)
                     now = time.time()
+                    # Evict stale entries when cache exceeds cap to prevent memory leak
+                    if len(alert_dedup) > _DEDUP_MAX:
+                        stale = [k for k, ts in alert_dedup.items() if (now - ts) > alert_ttl]
+                        for k in stale:
+                            del alert_dedup[k]
                     last_alerted = alert_dedup.get(dedup_key, 0)
                     is_new_alert = (now - last_alerted) > alert_ttl
                     if is_new_alert:
@@ -266,9 +283,13 @@ def make_packet_handler(rules, ignore_ips, logger, config, rate_limiter,
                     if payload_len > 0:
                         detection_reasons.append(f"encrypted_payload({payload_len}B)")
 
-                    # --- Zero-Day Alert Deduplication ---
+                    # --- Zero-Day Alert Deduplication (Bug 2 Fix: shared eviction) ---
                     dedup_key = (norm.get("ip_src"), "ZERO-DAY-ANOMALY")
                     now = time.time()
+                    if len(alert_dedup) > _DEDUP_MAX:
+                        stale = [k for k, ts in alert_dedup.items() if (now - ts) > alert_ttl]
+                        for k in stale:
+                            del alert_dedup[k]
                     last_alerted = alert_dedup.get(dedup_key, 0)
                     is_new_alert = (now - last_alerted) > alert_ttl
 
@@ -461,7 +482,7 @@ def run_analysis(pcap_path, mode='live'):
 # ============================================================
 def main():
     parser = argparse.ArgumentParser(
-        description="Sentinel Forge Dynamic Analyzer — Live DPI Engine"
+        description="Occult Tracer Dynamic Analyzer — Live DPI Engine"
     )
     parser.add_argument(
         "--verbose", "-v",
