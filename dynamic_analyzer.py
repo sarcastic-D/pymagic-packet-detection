@@ -222,6 +222,9 @@ def make_packet_handler(rules, ignore_ips, logger, config, rate_limiter,
                     threat_name = rule.get("meta", {}).get("name",
                                           rule.get("meta", {}).get("source_rootkit", rule_id))
                     malicious_ip = norm.get("ip_src")
+                    
+                    if norm.get("was_fragmented"):
+                        reasons = reasons + ", [FRAGMENTS_REASSEMBLED]"
 
                     # --- Alert Deduplication (Bug 2 Fix: bounded eviction) ---
                     dedup_key = (malicious_ip, rule_id)
@@ -476,7 +479,6 @@ def run_analysis(pcap_path, mode='live'):
 
     return detected_alerts
 
-
 # ============================================================
 # MAIN ENTRY POINT
 # ============================================================
@@ -488,6 +490,12 @@ def main():
         "--verbose", "-v",
         action="store_true",
         help="Show all events including LRU cache hits and benign packets"
+    )
+    parser.add_argument(
+        "--pcap",
+        type=str,
+        default=None,
+        help="Analyze an offline PCAP file instead of live sniffing"
     )
     args = parser.parse_args()
 
@@ -548,9 +556,6 @@ def main():
     print(f"[*] Verbose Mode         : {'ON' if args.verbose else 'OFF (only alerts shown)'}")
     print(f"[*] Async Webhooks       : ENABLED (Threading)")
     print()
-    print(f"[*] Sniffing on interface: {iface}  |  Filter: '{sniff_filter}'")
-    print(f"[*] Waiting for threats...\n")
-
     # --- Bind all startup resources via closure and start sniffing ---
     handler = make_packet_handler(
         rules=rules,
@@ -563,12 +568,17 @@ def main():
         verbose=args.verbose
     )
 
-    sniff(
-        iface=iface,
-        prn=handler,
-        filter=sniff_filter,
-        store=0
-    )
+    if args.pcap:
+        print(f"[*] Sniffing on PCAP file: {args.pcap}")
+        if not os.path.exists(args.pcap):
+            print(f"[!] PCAP file not found: {args.pcap}")
+            return
+        sniff(offline=args.pcap, prn=handler, store=0)
+        print("\n[+] Offline PCAP analysis complete.")
+    else:
+        print(f"[*] Sniffing on interface: {iface}  |  Filter: '{sniff_filter}'")
+        print(f"[*] Waiting for threats...\n")
+        sniff(iface=iface, prn=handler, filter=sniff_filter, store=0)
 
 
 if __name__ == "__main__":

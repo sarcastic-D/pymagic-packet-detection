@@ -58,7 +58,8 @@ def normalize_packet(pkt):
     norm = {
         "protocol": "TCP" if TCP in pkt else "UDP" if UDP in pkt else "IP",
         "ip_src": pkt[IP].src,
-        "ip_dst": pkt[IP].dst
+        "ip_dst": pkt[IP].dst,
+        "was_fragmented": getattr(pkt, '_was_fragmented', False)
     }
     
     if TCP in pkt:

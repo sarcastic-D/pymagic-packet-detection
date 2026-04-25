@@ -65,6 +65,7 @@ class FragmentReassembler:
                         if IP in p and p[IP].frag == 0 and p[IP].flags.MF == 0:
                             del self.buffer[key]
                             print(f"    [🛡️ DEFRAG] Successfully reassembled {len(p)} bytes from fragments! Passing to DPI...")
+                            p._was_fragmented = True
                             return p
             except Exception as e:
                 print(f"[!] Defrag Error: {e}")
