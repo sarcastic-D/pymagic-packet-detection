@@ -50,6 +50,9 @@ class FragmentReassembler:
             self.buffer[key] = {"pkts": [], "first_seen": now}
 
         self.buffer[key]["pkts"].append(pkt)
+        
+        # VISUAL PROOF FOR DEMO
+        print(f"    [⚡ DEFRAG] Buffering fragment (offset={ip.frag}) from {ip.src}...")
 
         # Optimization: Only attempt defrag if we see the 'Last Fragment' (MF=0)
         # or if buffer is getting large.
@@ -61,6 +64,7 @@ class FragmentReassembler:
                     for p in plist:
                         if IP in p and p[IP].frag == 0 and p[IP].flags.MF == 0:
                             del self.buffer[key]
+                            print(f"    [🛡️ DEFRAG] Successfully reassembled {len(p)} bytes from fragments! Passing to DPI...")
                             return p
             except Exception as e:
                 print(f"[!] Defrag Error: {e}")
